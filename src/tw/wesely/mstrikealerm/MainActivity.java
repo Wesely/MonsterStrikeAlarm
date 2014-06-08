@@ -1,17 +1,15 @@
 package tw.wesely.mstrikealerm;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import tw.wesely.mstrikealert.R;
-
-import de.greenrobot.event.EventBus;
+import tw.wesely.mstrikealarm.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -24,13 +22,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,8 +37,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.webkit.WebView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements
@@ -98,18 +97,22 @@ public class MainActivity extends ActionBarActivity implements
 	// URL Address
 	String url = "http://www.dopr.net/monst";
 	ProgressDialog mProgressDialog;
+	static View rootView;
+	LinearLayout rootLL;
 
 	// Title AsyncTask
 	private class MonsterSite extends AsyncTask<Void, Void, Void> {
+		@SuppressWarnings("unused")
 		String title;
 		Document document;
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			rootLL = (LinearLayout) findViewById(R.id.rootLL);
 			mProgressDialog = new ProgressDialog(MainActivity.this);
-			mProgressDialog.setTitle("¸ü¤J­°Á{®É¶¡");
-			mProgressDialog.setMessage("¸ü¤J¤¤...");
+			mProgressDialog.setTitle("è¼‰å…¥é™è‡¨æ™‚é–“");
+			mProgressDialog.setMessage("è¼‰å…¥ä¸­...");
 			mProgressDialog.setIndeterminate(false);
 			mProgressDialog.show();
 		}
@@ -131,8 +134,8 @@ public class MainActivity extends ActionBarActivity implements
 		@SuppressLint("SetJavaScriptEnabled")
 		@Override
 		protected void onPostExecute(Void result) {
-			TextView tvGroup = (TextView) findViewById(R.id.tvGroup);
-			tvGroup.setText(getGroupInfo(43));
+			rootLL = (LinearLayout) findViewById(R.id.rootLL);
+			setGroupInfo();
 			String content = "";
 			/** show table 0 & 1 **/
 			// content = content + "get(0) = \n"
@@ -147,63 +150,144 @@ public class MainActivity extends ActionBarActivity implements
 			try {
 				content = content + parseTurtleTable(document);
 			} catch (Exception e) {
+				e.printStackTrace();
 				Builder builder = new AlertDialog.Builder(MainActivity.this);
-				// ³]©wDialogªº¼ĞÃD
-				builder.setTitle("µLªk¤ÀªR");
-				builder.setMessage("¥X²{¤F¿ù»~©Î¬O¹w®Æ¤§¥~ªº­°Á{¬¡°Ê¡A½Ğ¥H¤U­±ªºªí®æ¤º®e®É¶¡¬°·Ç\n¯QÀt±NµLªk³]©w¾xÄÁ·q½Ğ¨£½Ì¡A§Ú­Ì·|¾¨§Ö§ó·s­×´_¡C");
+				// è¨­å®šDialogçš„æ¨™é¡Œ
+				builder.setTitle("ç„¡æ³•åˆ†æ");
+				builder.setMessage("å‡ºç¾äº†éŒ¯èª¤æˆ–æ˜¯é æ–™ä¹‹å¤–çš„é™è‡¨æ´»å‹•ï¼Œè«‹ä»¥ä¸‹é¢çš„è¡¨æ ¼å…§å®¹æ™‚é–“ç‚ºæº–\nçƒé¾œå°‡ç„¡æ³•è¨­å®šé¬§é˜æ•¬è«‹è¦‹è«’ï¼Œæˆ‘å€‘æœƒå„˜å¿«æ›´æ–°ä¿®å¾©ã€‚");
 				builder.create().show();
 			}
 
-			WebView wv = (WebView) findViewById(R.id.wv);
+			LayoutInflater inflater = (LayoutInflater) MainActivity.this
+					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+			TextView tvHeader2 = (TextView) inflater.inflate(
+					R.layout.component_headertextview, null);
+			tvHeader2.setText("ã€ä»Šæ—¥é™è‡¨é—œå¡ï¼ã€‘\n*å–è‡ªæ—¥æ–‡ç‰ˆæ”»ç•¥ç¶²\né»é¸é€£çµæœƒå‰å¾€æ—¥ç‰ˆç¶²ç«™");
+			rootLL.addView(tvHeader2);
+
+			WebView wv2 = new WebView(MainActivity.this);
+			wv2.setWebViewClient(new WebViewClient() {
+				public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					Log.d("url.startsWith", url);
+					if (url != null && url.startsWith("http://")) {
+						return true;
+					} else {
+						return true;
+					}
+				}
+			});
+			wv2.getSettings().setJavaScriptEnabled(true);
+			wv2.loadDataWithBaseURL(
+					"",
+					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
+							+ document.select("table").get(2).html()
+							+ "</table>", "text/html", "UTF-8", "");
+			rootLL.addView(wv2);
+
+			TextView tvHeader = (TextView) inflater.inflate(
+					R.layout.component_headertextview, null);
+			tvHeader.setText("ã€è¿‘æœŸé™è‡¨æ™‚é–“è¡¨ã€‘\n*å–è‡ªæ—¥æ–‡ç‰ˆæ”»ç•¥ç¶²\né»é¸é€£çµæœƒå‰å¾€æ—¥ç‰ˆç¶²ç«™");
+			rootLL.addView(tvHeader);
+			/*********************************************/
+			WebView wv = new WebView(MainActivity.this);
+			wv.setWebViewClient(new WebViewClient() {
+				public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					Log.d("url.startsWith", url);
+					if (url != null && url.startsWith("http://")) {
+						view.getContext().startActivity(
+								new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+						return true;
+					} else {
+						return true;
+					}
+				}
+			});
 			wv.getSettings().setJavaScriptEnabled(true);
-			wv.loadDataWithBaseURL("", document.select("table").get(2).html(),
-					"text/html", "UTF-8", "");
+			wv.loadDataWithBaseURL(
+					"",
+					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
+							+ document.select("table").get(3).html()
+							+ "</table>", "text/html", "UTF-8", "");
+			rootLL.addView(wv);
+
 			// Set title into TextView
 			TextView txttitle = (TextView) findViewById(R.id.section_label);
-			txttitle.setText(content);
+			txttitle.setText(""); // set to content for debug
 			mProgressDialog.dismiss();
 		}
 	}
 
-	public String getGroupInfo(int id) {
-		int riceGroup = (id - (id / 4) * 4);
-		int yearGroup = (id - (id / 5) * 5);
-		String result = "¡iID¥½¨â½X " + id + " ©ÒÄİ²Õ§O¡j\n" + "¶ºÀt¡G" + riceGroup + "²Õ"
-				+ "\n¦~Àt¡G" + yearGroup + "²Õ\n";
-		return result;
+	public void setGroupInfo() {
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(MainActivity.this);
+		TextView tvGroup = (TextView) findViewById(R.id.tvGroup);
+		int id = sharedPrefs.getInt("ID", 00);
+		int riceGroup = (id % 4);
+		int yearGroup = (id % 5);
+		String result = "ã€IDæœ«å…©ç¢¼ " + id + " æ‰€å±¬çµ„åˆ¥ã€‘\n" + "é£¯é¾œï¼š" + riceGroup + "çµ„"
+				+ "\nå¹´é¾œï¼š" + yearGroup + "çµ„\n";
+		tvGroup.setText(result);
 	}
 
+
 	public String parseTurtleTable(Element document) {
+
 		String content = "=========================\n";
-		
 		Elements tbls = document.getElementsByTag("table");
-		for(Element tbl : tbls) {
+
+		for (Element tbl : tbls) {
 			Element headline = tbl.previousElementSibling();
-			while(headline != null) {
-				if(headline.tagName() == "h2" || headline.tagName() == "h3")	break;
+			List<String> listTH = new ArrayList<String>();
+			List<String> listTD = new ArrayList<String>();
+
+			while (headline != null) {
+				if (headline.tagName() == "h2" || headline.tagName() == "h3")
+					break;
 				headline = headline.previousElementSibling();
 			}
 			content += headline.text() + "\n";
 			content += "----------------------\n";
-			
+
 			content += "| ";
 			Elements fields = tbl.getElementsByTag("th");
-			for(Element field : fields)
+			for (Element field : fields) {// çµ„
 				content += field.text() + " | ";
-			
+				listTH.add(field.text());
+			}
+
 			content += "\n";
 			content += "| ";
 			int cnt = 0;
 			Elements datas = tbl.getElementsByTag("td");
-			for(Element data : datas) {
+			for (Element data : datas) {
 				++cnt;
+				Log.d("for (Element data ",
+						"cnt = " + cnt + ";  " + data.text());
 				content += data.text() + " | ";
-				if(cnt%fields.size() == 0)	content += "\n";
+				listTD.add(data.text());
+				if (cnt % fields.size() == 0)
+					content += "\n";
 			}
-			
+
+			if (headline.text().contains("é£¯")) {
+				Log.d("parseTurtleTable", "é£¯é¾œ");
+				TurtleQuest tq = new TurtleQuest("ã€Œå¹´ã®åŠŸã‚ˆã‚Šäº€ã®ç”²ï¼Ÿã€", listTH, listTD);
+				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+			}
+			if (headline.text().contains("å¹´")) {
+				Log.d("parseTurtleTable", "å¹´é¾œ");
+				TurtleQuest tq = new TurtleQuest("ã€Œæ˜¼ã®é£¯ã‚ˆã‚Šäº€ã®ç”²ï¼Ÿã€", listTH, listTD);
+				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+			}
+			if (headline.text().contains("ãƒãƒ³")) {
+				Log.d("parseTurtleTable", "è¶…å¤§é¾œ");
+				TurtleQuest tq = new TurtleQuest("ã€Œãƒãƒ³ã®äº€ã‚ˆã‚Šã‚ªã‚¯ã®ç”²ï¼Ÿã€", listTH,
+						listTD);
+				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+			}
 			content += "===========================\n";
 		}
-	
 		return content;
 	}
 
@@ -242,6 +326,12 @@ public class MainActivity extends ActionBarActivity implements
 		return super.onOptionsItemSelected(item);
 	}
 
+	public static void setTextToMainPage(String string) {
+		TextView textView = (TextView) rootView
+				.findViewById(R.id.section_label);
+		textView.setText(string);
+	}
+
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
@@ -269,45 +359,21 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
+			rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 			TextView textView = (TextView) rootView
 					.findViewById(R.id.section_label);
 			switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
 			case 1:
-				textView.setText(Integer.toString(getArguments().getInt(
-						ARG_SECTION_NUMBER)));
-
+				textView.setText("è¼‰å…¥ä¸­...");
 				break;
 			case 2:
-				View contentView = inflater.inflate(R.layout.dialog_setgroup,
-						container, false);
-				// ²£¥Í¤@­ÓBuilderª«¥ó
-				Builder builder = new AlertDialog.Builder(getActivity());
-				// ³]©wDialogªº¼ĞÃD
-				builder.setTitle("³]©w²Õ§O");
-				// ³]©wDialogªº¤º®e
-				builder.setView(contentView);
-				// ³]©wPositive«ö¶s¸ê®Æ
-				builder.setPositiveButton("½T»{",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								// «ö¤U«ö¶s®ÉÅã¥Ü§ÖÅã
-							}
-						});
-				// ³]©wNegative«ö¶s¸ê®Æ
-				builder.setNegativeButton("©ñ±ó",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								dialog.dismiss();
-							}
-						});
-				builder.create().show();
-				// §Q¥ÎBuilderª«¥ó«Ø¥ßAlertDialog
+				SharedPreferences sharedPrefs = PreferenceManager
+						.getDefaultSharedPreferences(getActivity());
+				setTextToMainPage("\n**ç›®å‰è¨­å®šçš„IDå°¾ç«¯å…©ç¢¼ç‚ºã€"
+						+ sharedPrefs.getInt("ID", 00) + "ã€‘");
+				new PlayerID().getSetIDAlertDialog(container, getActivity())
+						.show();
 				break;
 			case 3:
 				textView.setText(getString(R.string.about));
@@ -322,6 +388,7 @@ public class MainActivity extends ActionBarActivity implements
 			((MainActivity) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
 		}
+
 	}
 
 }

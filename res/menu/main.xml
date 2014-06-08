@@ -3,14 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="tw.wesely.mstrikealert.MainActivity" >
 
+    <!--
     <item
-        android:id="@+id/action_example"
-        android:title="@string/action_example"
+        android:id="@+id/action_set_id"
+        android:title="@string/action_id"
         app:showAsAction="withText|ifRoom"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never"/>
+        app:showAsAction="never"/>    -->
 
 </menu>

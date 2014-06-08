@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:gravity="center"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical" >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="15dp"
         android:text="（日版限定）\n輸入ID末2碼"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
-        android:id="@+id/editText1"
-        android:layout_width="80dp"
+        android:id="@+id/etID"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:background="@drawable/input_text_area"
-        android:inputType="numberDecimal" >
+        android:ems="10"
+        android:hint="2位數字"
+        android:inputType="numberDecimal"
+        android:layout_margin="15dp"
+        android:padding="15dp" >
 
         <requestFocus />
     </EditText>
