@@ -9,8 +9,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import de.greenrobot.event.EventBus;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -142,8 +140,8 @@ public class MainActivity extends ActionBarActivity implements
 
 			WebView wv = (WebView) findViewById(R.id.wv);
 			wv.getSettings().setJavaScriptEnabled(true);
-			wv.loadDataWithBaseURL("", document.select("table").get(2).html(),
-					"text/html", "UTF-8", "");
+			//wv.loadDataWithBaseURL("", document.select("table").get(2).html(),
+			//		"text/html", "UTF-8", "");
 			// Set title into TextView
 			TextView txttitle = (TextView) findViewById(R.id.section_label);
 			txttitle.setText(content);
@@ -152,32 +150,36 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public String parseTurtleTable(Element document) {
-		String content = "";
-
-		Element table = document.select("table").get(0);
-		Iterator<Element> ite_th = table.select("th").iterator();
-		Iterator<Element> ite_td = table.select("td").iterator();
-		content = content + "\n===========get(0)============\n";
-		while (ite_td.hasNext()) {
-			content = content + "\n" + ite_th.next().text();
-			content = content + "\n" + ite_td.next().text();
+		String content = "=========================\n";
+		
+		Elements tbls = document.getElementsByTag("table");
+		for(Element tbl : tbls) {
+			Element headline = tbl.previousElementSibling();
+			while(headline != null) {
+				if(headline.tagName() == "h2" || headline.tagName() == "h3")	break;
+				headline = headline.previousElementSibling();
+			}
+			content += headline.text() + "\n";
+			content += "----------------------\n";
+			
+			content += "| ";
+			Elements fields = tbl.getElementsByTag("th");
+			for(Element field : fields)
+				content += field.text() + " | ";
+			
+			content += "\n";
+			content += "| ";
+			int cnt = 0;
+			Elements datas = tbl.getElementsByTag("td");
+			for(Element data : datas) {
+				++cnt;
+				content += data.text() + " | ";
+				if(cnt%fields.size() == 0)	content += "\n";
+			}
+			
+			content += "===========================\n";
 		}
-
-		Element table1 = document.select("table").get(1);
-		Iterator<Element> ite_th1 = table1.select("th").iterator();
-		Iterator<Element> ite_td1 = table1.select("td").iterator();
-		content = content + "\n===========get(1)============\n";
-		while (ite_td1.hasNext()) {
-			content = content + "\n" + ite_th1.next().text();
-			content = content + "\n" + ite_td1.next().text();
-		}
-
-		Element table2 = document.select("table").get(2);
-		Iterator<Element> ite_tr2 = table2.select("tr").iterator();
-		content = content + "\n=======================\n";
-		while (ite_tr2.hasNext()) {
-			content = content + "\n" + ite_tr2.next().html();
-		}
+	
 		return content;
 	}
 
