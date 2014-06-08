@@ -1,5 +1,6 @@
-package tw.wesely.mstrikealert;
+package tw.wesely.mstrikealerm;
 
+import tw.wesely.mstrikealert.R;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;

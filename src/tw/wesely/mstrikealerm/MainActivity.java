@@ -1,4 +1,4 @@
-package tw.wesely.mstrikealert;
+package tw.wesely.mstrikealerm;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,14 +9,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import tw.wesely.mstrikealert.R;
+
+import de.greenrobot.event.EventBus;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -92,7 +99,6 @@ public class MainActivity extends ActionBarActivity implements
 	String url = "http://www.dopr.net/monst";
 	ProgressDialog mProgressDialog;
 
-
 	// Title AsyncTask
 	private class MonsterSite extends AsyncTask<Void, Void, Void> {
 		String title;
@@ -125,6 +131,8 @@ public class MainActivity extends ActionBarActivity implements
 		@SuppressLint("SetJavaScriptEnabled")
 		@Override
 		protected void onPostExecute(Void result) {
+			TextView tvGroup = (TextView) findViewById(R.id.tvGroup);
+			tvGroup.setText(getGroupInfo(43));
 			String content = "";
 			/** show table 0 & 1 **/
 			// content = content + "get(0) = \n"
@@ -136,17 +144,33 @@ public class MainActivity extends ActionBarActivity implements
 			// content = content + "\n\nget(2) = \n"
 			// + document.select("table").get(2).html();
 
-			content = content + parseTurtleTable(document);
+			try {
+				content = content + parseTurtleTable(document);
+			} catch (Exception e) {
+				Builder builder = new AlertDialog.Builder(MainActivity.this);
+				// 設定Dialog的標題
+				builder.setTitle("無法分析");
+				builder.setMessage("出現了錯誤或是預料之外的降臨活動，請以下面的表格內容時間為準\n烏龜將無法設定鬧鐘敬請見諒，我們會儘快更新修復。");
+				builder.create().show();
+			}
 
 			WebView wv = (WebView) findViewById(R.id.wv);
 			wv.getSettings().setJavaScriptEnabled(true);
-			//wv.loadDataWithBaseURL("", document.select("table").get(2).html(),
-			//		"text/html", "UTF-8", "");
+			wv.loadDataWithBaseURL("", document.select("table").get(2).html(),
+					"text/html", "UTF-8", "");
 			// Set title into TextView
 			TextView txttitle = (TextView) findViewById(R.id.section_label);
 			txttitle.setText(content);
 			mProgressDialog.dismiss();
 		}
+	}
+
+	public String getGroupInfo(int id) {
+		int riceGroup = (id - (id / 4) * 4);
+		int yearGroup = (id - (id / 5) * 5);
+		String result = "【ID末兩碼 " + id + " 所屬組別】\n" + "飯龜：" + riceGroup + "組"
+				+ "\n年龜：" + yearGroup + "組\n";
+		return result;
 	}
 
 	public String parseTurtleTable(Element document) {
@@ -249,8 +273,46 @@ public class MainActivity extends ActionBarActivity implements
 					false);
 			TextView textView = (TextView) rootView
 					.findViewById(R.id.section_label);
-			textView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
+			switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
+			case 1:
+				textView.setText(Integer.toString(getArguments().getInt(
+						ARG_SECTION_NUMBER)));
+
+				break;
+			case 2:
+				View contentView = inflater.inflate(R.layout.dialog_setgroup,
+						container, false);
+				// 產生一個Builder物件
+				Builder builder = new AlertDialog.Builder(getActivity());
+				// 設定Dialog的標題
+				builder.setTitle("設定組別");
+				// 設定Dialog的內容
+				builder.setView(contentView);
+				// 設定Positive按鈕資料
+				builder.setPositiveButton("確認",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// 按下按鈕時顯示快顯
+							}
+						});
+				// 設定Negative按鈕資料
+				builder.setNegativeButton("放棄",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.dismiss();
+							}
+						});
+				builder.create().show();
+				// 利用Builder物件建立AlertDialog
+				break;
+			case 3:
+				textView.setText(getString(R.string.about));
+				break;
+			}
 			return rootView;
 		}
 

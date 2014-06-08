@@ -9,5 +9,13 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
+    <string name="about">
+        【關於】\n
+ 	提供設定日版ID功能，自動從網站上 <a href="http://www.dopr.net/monst">http://www.dopr.net/monst</a>
+ 	更新每日烏龜資訊。\n但預測時間未必精準，僅供參考。\n\n
+ 	【使用方式】\n
+ 	請先從螢幕左側往右拉出選單後，選擇ID設定，輸入ID後兩碼之後按確定即可。\n
+ 	在《烏龜時間》頁面當中會顯示當日的烏龜時間以及自己的分組，可選擇是否開啟鬧鐘提醒功能。\n
+ 	另外底下也會直接顯示來源網站的表格，如遇到烏龜時間顯示不出來的時候請以表格內容為準。</string>
 
 </resources>
