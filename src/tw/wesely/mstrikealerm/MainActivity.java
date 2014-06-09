@@ -10,11 +10,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.app.PendingIntent;
 import tw.wesely.mstrikealarm.R;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.support.v7.app.ActionBarActivity;
@@ -43,6 +45,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
+@SuppressLint("NewApi")
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
 
@@ -69,6 +72,7 @@ public class MainActivity extends ActionBarActivity implements
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
+		
 	}
 
 	@Override
@@ -93,6 +97,8 @@ public class MainActivity extends ActionBarActivity implements
 		case 3:
 			mTitle = getString(R.string.title_section3);
 			break;
+		case 4:
+			mTitle = getString(R.string.title_section4);
 		}
 	}
 
@@ -126,7 +132,10 @@ public class MainActivity extends ActionBarActivity implements
 				document = Jsoup.connect(url).get();
 				// Get the html document title
 				title = document.title();
-
+				// Replace all hypertext to absolute link
+				Elements links = document.getElementsByTag("a");
+				for(Element link : links) 
+					link.attr("href", "http://www.dopr.net" + link.attr("href"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -139,16 +148,7 @@ public class MainActivity extends ActionBarActivity implements
 			rootLL = (LinearLayout) findViewById(R.id.rootLL);
 			setGroupInfo();
 			String content = "";
-			/** show table 0 & 1 **/
-			// content = content + "get(0) = \n"
-			// + document.select("table").get(0).text()
-			// + "\n\nget(1) = \n"
-			// + document.select("table").get(1).text();
-
-			/** show table 2 **/
-			// content = content + "\n\nget(2) = \n"
-			// + document.select("table").get(2).html();
-
+			
 			try {
 				content = content + parseTurtleTable(document);
 			} catch (Exception e) {
@@ -176,6 +176,20 @@ public class MainActivity extends ActionBarActivity implements
 			/*********************************************/
 
 			WebView wv2 = new WebView(MainActivity.this);
+			wv2.setWebViewClient(new WebViewClient() {
+				public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					Log.d("url.startsWith", url);
+					if (url != null && url.startsWith("http://")) {
+						view.getContext().startActivity(
+								new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+						return true;
+					} else {
+						return true;
+					}
+				}
+			});
+			
+			wv2.getSettings().setJavaScriptEnabled(true);
 			wv2.loadDataWithBaseURL(
 					"",
 					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
@@ -199,6 +213,20 @@ public class MainActivity extends ActionBarActivity implements
 			rootLL.addView(tvHeader);
 			/*********************************************/
 			WebView wv = new WebView(MainActivity.this);
+			wv.setWebViewClient(new WebViewClient() {
+				public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					Log.d("url.startsWith", url);
+					if (url != null && url.startsWith("http://")) {
+						view.getContext().startActivity(
+								new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+						return true;
+					} else {
+						return true;
+					}
+				}
+			});
+			
+			wv.getSettings().setJavaScriptEnabled(true);
 			wv.loadDataWithBaseURL(
 					"",
 					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
@@ -212,12 +240,20 @@ public class MainActivity extends ActionBarActivity implements
 			mProgressDialog.dismiss();
 		}
 	}
+	
+	public void setTurtleNotification() {
+		NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE); 
+		Notification not = new Notification.Builder(getBaseContext()).setContentTitle("打烏龜囉!")
+				.setSmallIcon(R.drawable.ic_launcher)
+				.build();
+		nm.notify(1, not);
+	}
 
 	public void setGroupInfo() {
 		SharedPreferences sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(MainActivity.this);
 		TextView tvGroup = (TextView) findViewById(R.id.tvGroup);
-		int id = sharedPrefs.getInt("ID", 00);
+		int id = sharedPrefs.getInt("ID", -1);
 		int riceGroup = (id % 4);
 		int yearGroup = (id % 5);
 		String result = "【ID末兩碼 " + id + " 所屬組別】\n" + "飯龜：" + riceGroup + "組"
@@ -228,7 +264,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	public String parseTurtleTable(Element document) {
 
-		String content = "=========================\n";
+		String content = "";
 		Elements tbls = document.getElementsByTag("table");
 
 		for (Element tbl : tbls) {
@@ -241,28 +277,16 @@ public class MainActivity extends ActionBarActivity implements
 					break;
 				headline = headline.previousElementSibling();
 			}
-			content += headline.text() + "\n";
-			content += "----------------------\n";
-
-			content += "| ";
+	
 			Elements fields = tbl.getElementsByTag("th");
-			for (Element field : fields) {// 組
-				content += field.text() + " | ";
+			for (Element field : fields) {	// 組
 				listTH.add(field.text());
 			}
 
-			content += "\n";
-			content += "| ";
-			int cnt = 0;
 			Elements datas = tbl.getElementsByTag("td");
 			for (Element data : datas) {
-				++cnt;
-				Log.d("for (Element data ",
-						"cnt = " + cnt + ";  " + data.text());
-				content += data.text() + " | ";
+				Log.d("for (Element data ", ";  " + data.text());
 				listTD.add(data.text());
-				if (cnt % fields.size() == 0)
-					content += "\n";
 			}
 
 			if (headline.text().contains("飯")) {
@@ -281,7 +305,8 @@ public class MainActivity extends ActionBarActivity implements
 						listTD);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
-			content += "===========================\n";
+			
+			setTurtleNotification();
 		}
 		return content;
 	}
@@ -372,6 +397,9 @@ public class MainActivity extends ActionBarActivity implements
 				break;
 			case 3:
 				textView.setText(getString(R.string.about));
+				break;
+			case 4:
+				textView.setText("Loading...");
 				break;
 			}
 			return rootView;
