@@ -1,7 +1,6 @@
 package tw.wesely.mstrikealerm;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.app.PendingIntent;
 import tw.wesely.mstrikealarm.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -23,12 +21,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
@@ -72,7 +64,7 @@ public class MainActivity extends ActionBarActivity implements
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
-		
+
 	}
 
 	@Override
@@ -134,7 +126,7 @@ public class MainActivity extends ActionBarActivity implements
 				title = document.title();
 				// Replace all hypertext to absolute link
 				Elements links = document.getElementsByTag("a");
-				for(Element link : links) 
+				for (Element link : links)
 					link.attr("href", "http://www.dopr.net" + link.attr("href"));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -147,10 +139,8 @@ public class MainActivity extends ActionBarActivity implements
 		protected void onPostExecute(Void result) {
 			rootLL = (LinearLayout) findViewById(R.id.rootLL);
 			setGroupInfo();
-			String content = "";
-			
 			try {
-				content = content + parseTurtleTable(document);
+				parseTurtleTable(document);
 			} catch (Exception e) {
 				e.printStackTrace();
 				Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -165,86 +155,43 @@ public class MainActivity extends ActionBarActivity implements
 
 			TextView tvHeader2 = (TextView) inflater.inflate(
 					R.layout.component_headertextview, null);
+			/*********************************************/
 			tvHeader2.setText("【今日降臨關卡！】\n*取自日文版攻略網\n點選連結會前往日版網站");
-			LayoutParams params = new LayoutParams(
-			        LayoutParams.MATCH_PARENT,      
-			        LayoutParams.WRAP_CONTENT
-			);
+			LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
+					LayoutParams.WRAP_CONTENT);
 			params.setMargins(0, 30, 0, 0);
 			tvHeader2.setLayoutParams(params);
 			rootLL.addView(tvHeader2);
-			/*********************************************/
-
-			WebView wv2 = new WebView(MainActivity.this);
-			wv2.setWebViewClient(new WebViewClient() {
-				public boolean shouldOverrideUrlLoading(WebView view, String url) {
-					Log.d("url.startsWith", url);
-					if (url != null && url.startsWith("http://")) {
-						view.getContext().startActivity(
-								new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-						return true;
-					} else {
-						return true;
-					}
-				}
-			});
-			
-			wv2.getSettings().setJavaScriptEnabled(true);
+			WebView wv2 = new MSWebView().getWebView(MainActivity.this);
 			wv2.loadDataWithBaseURL(
 					"",
 					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
 							+ document.select("table").get(2).html()
 							+ "</table>", "text/html", "UTF-8", "");
-			wv2.setWebViewClient(new WebViewClient(){
-				 @Override
-				    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-					 String SCHEME = "https://";
-					 Log.d("shouldOverrideUrlLoading" , url);
-					    return false;
-				    }
-			});
-			
+
 			rootLL.addView(wv2);
+			/*********************************************/
 
 			TextView tvHeader = (TextView) inflater.inflate(
 					R.layout.component_headertextview, null);
 			tvHeader.setText("【近期降臨時間表】\n*取自日文版攻略網\n點選連結會前往日版網站");
 			tvHeader.setLayoutParams(params);
 			rootLL.addView(tvHeader);
-			/*********************************************/
 			WebView wv = new WebView(MainActivity.this);
-			wv.setWebViewClient(new WebViewClient() {
-				public boolean shouldOverrideUrlLoading(WebView view, String url) {
-					Log.d("url.startsWith", url);
-					if (url != null && url.startsWith("http://")) {
-						view.getContext().startActivity(
-								new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-						return true;
-					} else {
-						return true;
-					}
-				}
-			});
-			
-			wv.getSettings().setJavaScriptEnabled(true);
 			wv.loadDataWithBaseURL(
 					"",
 					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
 							+ document.select("table").get(3).html()
 							+ "</table>", "text/html", "UTF-8", "");
 			rootLL.addView(wv);
-
-			// Set title into TextView
-			TextView txttitle = (TextView) findViewById(R.id.section_label);
-			txttitle.setText(""); // set to content for debug
 			mProgressDialog.dismiss();
 		}
 	}
-	
+
 	public void setTurtleNotification() {
-		NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE); 
-		Notification not = new Notification.Builder(getBaseContext()).setContentTitle("打烏龜囉!")
-				.setSmallIcon(R.drawable.ic_launcher)
+		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		Notification not = new Notification.Builder(getBaseContext())
+				.setContentTitle("打烏龜囉!").setSmallIcon(R.drawable.ic_launcher)
 				.build();
 		nm.notify(1, not);
 	}
@@ -252,15 +199,14 @@ public class MainActivity extends ActionBarActivity implements
 	public void setGroupInfo() {
 		SharedPreferences sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(MainActivity.this);
-		TextView tvGroup = (TextView) findViewById(R.id.tvGroup);
+		TextView tvGroup = (TextView) findViewById(R.id.tvMsg);
 		int id = sharedPrefs.getInt("ID", -1);
 		int riceGroup = (id % 4);
 		int yearGroup = (id % 5);
-		String result = "【ID末兩碼 " + id + " 所屬組別】\n" + "飯龜：" + riceGroup + "組"
-				+ "\n年龜：" + yearGroup + "組\n";
+		String result = "【ID末兩碼 " + id + " 所屬組別】" + "\n年龜：" + yearGroup + "組\n"
+				+ "飯龜：" + riceGroup + "組";
 		tvGroup.setText(result);
 	}
-
 
 	public String parseTurtleTable(Element document) {
 
@@ -277,9 +223,9 @@ public class MainActivity extends ActionBarActivity implements
 					break;
 				headline = headline.previousElementSibling();
 			}
-	
+
 			Elements fields = tbl.getElementsByTag("th");
-			for (Element field : fields) {	// 組
+			for (Element field : fields) { // 組
 				listTH.add(field.text());
 			}
 
@@ -305,7 +251,7 @@ public class MainActivity extends ActionBarActivity implements
 						listTD);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
-			
+
 			setTurtleNotification();
 		}
 		return content;
@@ -347,8 +293,7 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public static void setTextToMainPage(String string) {
-		TextView textView = (TextView) rootView
-				.findViewById(R.id.section_label);
+		TextView textView = (TextView) rootView.findViewById(R.id.tvMsg);
 		textView.setText(string);
 	}
 
@@ -381,8 +326,7 @@ public class MainActivity extends ActionBarActivity implements
 				Bundle savedInstanceState) {
 			rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
-			TextView textView = (TextView) rootView
-					.findViewById(R.id.section_label);
+			TextView textView = (TextView) rootView.findViewById(R.id.tvMsg);
 			switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
 			case 1:
 				textView.setText("載入中...");

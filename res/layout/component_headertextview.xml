@@ -3,7 +3,7 @@
     android:id="@+id/tvHeader"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#444444"
+    android:background="@drawable/roundcorner"
     android:padding="10dp"
     android:layout_marginTop="15dp"
     android:text="HeaderTitle"
