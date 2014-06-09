@@ -1,6 +1,7 @@
 package tw.wesely.mstrikealerm;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -164,46 +166,39 @@ public class MainActivity extends ActionBarActivity implements
 			TextView tvHeader2 = (TextView) inflater.inflate(
 					R.layout.component_headertextview, null);
 			tvHeader2.setText("【今日降臨關卡！】\n*取自日文版攻略網\n點選連結會前往日版網站");
+			LayoutParams params = new LayoutParams(
+			        LayoutParams.MATCH_PARENT,      
+			        LayoutParams.WRAP_CONTENT
+			);
+			params.setMargins(0, 30, 0, 0);
+			tvHeader2.setLayoutParams(params);
 			rootLL.addView(tvHeader2);
+			/*********************************************/
 
 			WebView wv2 = new WebView(MainActivity.this);
-			wv2.setWebViewClient(new WebViewClient() {
-				public boolean shouldOverrideUrlLoading(WebView view, String url) {
-					Log.d("url.startsWith", url);
-					if (url != null && url.startsWith("http://")) {
-						return true;
-					} else {
-						return true;
-					}
-				}
-			});
-			wv2.getSettings().setJavaScriptEnabled(true);
 			wv2.loadDataWithBaseURL(
 					"",
 					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
 							+ document.select("table").get(2).html()
 							+ "</table>", "text/html", "UTF-8", "");
+			wv2.setWebViewClient(new WebViewClient(){
+				 @Override
+				    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					 String SCHEME = "https://";
+					 Log.d("shouldOverrideUrlLoading" , url);
+					    return false;
+				    }
+			});
+			
 			rootLL.addView(wv2);
 
 			TextView tvHeader = (TextView) inflater.inflate(
 					R.layout.component_headertextview, null);
 			tvHeader.setText("【近期降臨時間表】\n*取自日文版攻略網\n點選連結會前往日版網站");
+			tvHeader.setLayoutParams(params);
 			rootLL.addView(tvHeader);
 			/*********************************************/
 			WebView wv = new WebView(MainActivity.this);
-			wv.setWebViewClient(new WebViewClient() {
-				public boolean shouldOverrideUrlLoading(WebView view, String url) {
-					Log.d("url.startsWith", url);
-					if (url != null && url.startsWith("http://")) {
-						view.getContext().startActivity(
-								new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-						return true;
-					} else {
-						return true;
-					}
-				}
-			});
-			wv.getSettings().setJavaScriptEnabled(true);
 			wv.loadDataWithBaseURL(
 					"",
 					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
@@ -272,17 +267,17 @@ public class MainActivity extends ActionBarActivity implements
 
 			if (headline.text().contains("飯")) {
 				Log.d("parseTurtleTable", "飯龜");
-				TurtleQuest tq = new TurtleQuest("「年の功より亀の甲？」", listTH, listTD);
+				TurtleQuest tq = new TurtleQuest("【昼の飯より亀の甲？】", listTH, listTD);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
 			if (headline.text().contains("年")) {
 				Log.d("parseTurtleTable", "年龜");
-				TurtleQuest tq = new TurtleQuest("「昼の飯より亀の甲？」", listTH, listTD);
+				TurtleQuest tq = new TurtleQuest("【年の功より亀の甲？】", listTH, listTD);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
 			if (headline.text().contains("マン")) {
 				Log.d("parseTurtleTable", "超大龜");
-				TurtleQuest tq = new TurtleQuest("「マンの亀よりオクの甲？」", listTH,
+				TurtleQuest tq = new TurtleQuest("【マンの亀よりオクの甲？】", listTH,
 						listTD);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
