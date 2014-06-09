@@ -124,7 +124,9 @@ public class MainActivity extends ActionBarActivity implements
 				document = Jsoup.connect(url).get();
 				// Get the html document title
 				title = document.title();
-
+				Elements links = document.getElementsByTag("a");
+				for(Element link : links) 
+					link.attr("href", "http://www.dopr.net" + link.attr("href"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -178,6 +180,7 @@ public class MainActivity extends ActionBarActivity implements
 				}
 			});
 			wv2.getSettings().setJavaScriptEnabled(true);
+			Log.d("table", document.select("table").get(2).html());
 			wv2.loadDataWithBaseURL(
 					"",
 					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
@@ -203,6 +206,7 @@ public class MainActivity extends ActionBarActivity implements
 					}
 				}
 			});
+			
 			wv.getSettings().setJavaScriptEnabled(true);
 			wv.loadDataWithBaseURL(
 					"",
