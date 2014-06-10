@@ -21,6 +21,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -52,6 +53,8 @@ public class MainActivity extends ActionBarActivity implements
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
+	static Context ctx;
+	static Document document;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +107,6 @@ public class MainActivity extends ActionBarActivity implements
 	private class MonsterSite extends AsyncTask<Void, Void, Void> {
 		@SuppressWarnings("unused")
 		String title;
-		Document document;
 
 		@Override
 		protected void onPreExecute() {
@@ -150,40 +152,6 @@ public class MainActivity extends ActionBarActivity implements
 				builder.create().show();
 			}
 
-			LayoutInflater inflater = (LayoutInflater) MainActivity.this
-					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-
-			TextView tvHeader2 = (TextView) inflater.inflate(
-					R.layout.component_headertextview, null);
-			/*********************************************/
-			tvHeader2.setText("【今日降臨關卡！】\n*取自日文版攻略網\n點選連結會前往日版網站");
-			LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
-					LayoutParams.WRAP_CONTENT);
-			params.setMargins(0, 30, 0, 0);
-			tvHeader2.setLayoutParams(params);
-			rootLL.addView(tvHeader2);
-			WebView wv2 = new MSWebView().getWebView(MainActivity.this);
-			wv2.loadDataWithBaseURL(
-					"",
-					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
-							+ document.select("table").get(2).html()
-							+ "</table>", "text/html", "UTF-8", "");
-
-			rootLL.addView(wv2);
-			/*********************************************/
-
-			TextView tvHeader = (TextView) inflater.inflate(
-					R.layout.component_headertextview, null);
-			tvHeader.setText("【近期降臨時間表】\n*取自日文版攻略網\n點選連結會前往日版網站");
-			tvHeader.setLayoutParams(params);
-			rootLL.addView(tvHeader);
-			WebView wv = new WebView(MainActivity.this);
-			wv.loadDataWithBaseURL(
-					"",
-					"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
-							+ document.select("table").get(3).html()
-							+ "</table>", "text/html", "UTF-8", "");
-			rootLL.addView(wv);
 			mProgressDialog.dismiss();
 		}
 	}
@@ -216,7 +184,8 @@ public class MainActivity extends ActionBarActivity implements
 		for (Element tbl : tbls) {
 			Element headline = tbl.previousElementSibling();
 			List<String> listTH = new ArrayList<String>();
-			List<String> listTD = new ArrayList<String>();
+			List<String> listTDTime = new ArrayList<String>();
+			List<String> listTDTitle = new ArrayList<String>();
 
 			while (headline != null) {
 				if (headline.tagName() == "h2" || headline.tagName() == "h3")
@@ -230,34 +199,54 @@ public class MainActivity extends ActionBarActivity implements
 			}
 
 			Elements datas = tbl.getElementsByTag("td");
-			for (Element data : datas) {
+			for (int index = 0; index < datas.size(); index++) {
+				Element data = datas.get(index);
 				String item = data.text();
-				if (item.matches(".*[0-9]:[0-9][0-9].*")) {
+				if ((index % fields.size()) == 0) { // is Stage Title
+					listTDTitle.add(item);
+					continue;
+				}
+				if (item.matches(".*[0-9]:[0-5][0-9].*")) {
 					// Representing TIME X:XX & XX:XX
 					item = TimeProc.getShiftedTime(item);
-					Log.d("Element time", item);
+					data.text(item);
+					Log.d("token time", (index % fields.size()) + ":" + item);
+					listTDTime.add(item);
+					continue;
 				}
-				listTD.add(item);
 			}
 
 			if (headline.text().contains("飯")) {
 				Log.d("parseTurtleTable", "飯龜");
-				TurtleQuest tq = new TurtleQuest("【昼の飯より亀の甲？】", listTH, listTD);
+				QuestTurtle tq = new QuestTurtle("【昼の飯より亀の甲？】", listTH,
+						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
 			if (headline.text().contains("年")) {
 				Log.d("parseTurtleTable", "年龜");
-				TurtleQuest tq = new TurtleQuest("【年の功より亀の甲？】", listTH, listTD);
+				QuestTurtle tq = new QuestTurtle("【年の功より亀の甲？】", listTH,
+						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
 			if (headline.text().contains("マン")) {
 				Log.d("parseTurtleTable", "超大龜");
-				TurtleQuest tq = new TurtleQuest("【マンの亀よりオクの甲？】", listTH,
-						listTD);
+				QuestTurtle tq = new QuestTurtle("【マンの亀よりオクの甲？】", listTH,
+						listTDTime);
+				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+			}
+			if (headline.text().contains("開催中")) {
+				Log.d("parseTurtleTable", "開催中");
+				QuestBoss tq = new QuestBoss("【現正降臨中】", listTDTitle, listTDTime);
+				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+			}
+			if (headline.text().contains("予定")) {
+				Log.d("parseTurtleTable", "予定");
+				QuestBoss tq = new QuestBoss("【未來降臨預定】", listTDTitle,
+						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
 
-			setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
+			// setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
 		}
 		return content;
 	}
@@ -336,7 +325,7 @@ public class MainActivity extends ActionBarActivity implements
 			case 1:
 				textView.setText("載入中...");
 				break;
-			case 2:
+			case 4:
 				SharedPreferences sharedPrefs = PreferenceManager
 						.getDefaultSharedPreferences(getActivity());
 				setTextToMainPage("\n**目前設定的ID尾端兩碼為【"
@@ -347,8 +336,39 @@ public class MainActivity extends ActionBarActivity implements
 			case 3:
 				textView.setText(getString(R.string.about));
 				break;
-			case 4:
-				textView.setText("Loading...");
+			case 2:
+				textView.setText("【近期降臨時間與攻略】");
+				LinearLayout rootLL = (LinearLayout) rootView
+						.findViewById(R.id.rootLL);
+				TextView tvHeader2 = (TextView) inflater.inflate(
+						R.layout.component_headertextview, null);
+				tvHeader2.setText("【現正降臨中！】\n*取自日文版攻略網\n點選連結會前往日版網站");
+				LayoutParams params = new LayoutParams(
+						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+				params.setMargins(0, 30, 0, 0);
+				tvHeader2.setLayoutParams(params);
+				rootLL.addView(tvHeader2);
+				MSWebView wv2 = new MSWebView(getActivity());
+				wv2.loadDataWithBaseURL(
+						"",
+						"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
+								+ document.select("table").get(2).html()
+								+ "</table>", "text/html", "UTF-8", "");
+
+				rootLL.addView(wv2);
+
+				TextView tvHeader = (TextView) inflater.inflate(
+						R.layout.component_headertextview, null);
+				tvHeader.setText("【今後降臨時刻預定】\n*取自日文版攻略網\n點選連結會前往日版網站");
+				tvHeader.setLayoutParams(params);
+				rootLL.addView(tvHeader);
+				MSWebView wv = new MSWebView(getActivity());
+				wv.loadDataWithBaseURL(
+						"",
+						"<table border=\"1\" style=\"border-collapse:collapse;\" borderColor=\"black\" >"
+								+ document.select("table").get(3).html()
+								+ "</table>", "text/html", "UTF-8", "");
+				rootLL.addView(wv);
 				break;
 			}
 			return rootView;

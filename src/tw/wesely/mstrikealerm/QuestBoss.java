@@ -1,39 +1,32 @@
 package tw.wesely.mstrikealerm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import tw.wesely.mstrikealarm.R;
-
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
-public class TurtleQuest {
+public class QuestBoss {
+
 	String title;
-	List<String> listTH, listTD;
-	static boolean extended = false;
+	List<String> listTDTitle, listTDTime;
+	static boolean extended = true;
 
-	public TurtleQuest(String title, List<String> listTH, List<String> listTD) {
+	public QuestBoss(String title, List<String> listTDTitle, List<String> listTDTime) {
 		this.title = title;
-		this.listTD = listTD;
-		this.listTH = listTH;
+		this.listTDTitle = listTDTitle;
+		this.listTDTime = listTDTime;
 	}
 
 	public View getTurtleStageChartView(Context ctx) {
-		SharedPreferences sharedPrefs = PreferenceManager
-				.getDefaultSharedPreferences(ctx);
 		LayoutInflater inflater = (LayoutInflater) ctx
 				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.item_questchart, null);
@@ -41,26 +34,17 @@ public class TurtleQuest {
 				.findViewById(R.id.container);
 		TextView tvTitle = (TextView) view.findViewById(R.id.title);
 		tvTitle.setText(this.title);
-		int group = sharedPrefs.getInt("ID", 00) % (listTD.size());
-		Log.d("getTurtleStageChartView", "id = " + sharedPrefs.getInt("ID", 00));
-		Log.d("getTurtleStageChartView", "size = " + listTD.size());
 
 		final List<View> listNotMyGroup = new ArrayList<View>();
-		for (int i = 0; i < listTD.size(); i++) {
-			View subView = inflater.inflate(R.layout.component_textviewpair,
+		for (int i = 0; i < listTDTime.size(); i++) {
+			View subView = inflater.inflate(R.layout.component_textviewpairboss,
 					null);
-			TextView tvGroup = (TextView) subView.findViewById(R.id.tvTop);
-			TextView tvTime = (TextView) subView.findViewById(R.id.tvBot);
-			tvGroup.setText(listTH.get(i));
-			tvTime.setText(listTD.get(i));
-			if (i == group) {
-				tvGroup.setTextColor(0xFF00BB00);
-				tvTime.setTextColor(0xFF00BB00);
-			} else {
-				subView.setVisibility(View.GONE);
-				listNotMyGroup.add(subView);
-			}
+			TextView tvLeft = (TextView) subView.findViewById(R.id.tvLeft);
+			TextView tvRight = (TextView) subView.findViewById(R.id.tvRight);
+			tvLeft.setText(listTDTitle.get(i));
+			tvRight.setText(listTDTime.get(i).replace(" ", "\n"));
 			container.addView(subView);
+			listNotMyGroup.add(subView);
 		}
 
 		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,

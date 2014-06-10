@@ -9,13 +9,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 @SuppressLint("SetJavaScriptEnabled")
-public class MSWebView {
+public class MSWebView extends WebView {
 
-	Context ctx; 
-	
-	public WebView getWebView(Context ctx) {
-		WebView wv = new WebView(ctx);
-		wv.setWebViewClient(new WebViewClient() {
+	public MSWebView(Context context) {
+		super(context);
+		this.setWebViewClient(new WebViewClient() {
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				Log.d("url.startsWith", url);
 				if (url != null && url.startsWith("http://")) {
@@ -27,9 +25,12 @@ public class MSWebView {
 				}
 			}
 		});
+	}
 
-		wv.getSettings().setJavaScriptEnabled(true);
-		return wv;
+	Context ctx; 
+	
+	public WebView getWebView(Context ctx) {
+		return this;
 	}
 	
 
