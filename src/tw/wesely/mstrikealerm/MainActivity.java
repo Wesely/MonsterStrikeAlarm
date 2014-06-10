@@ -188,11 +188,11 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
-	public void setTurtleNotification() {
+	public void setTurtleNotification(String title, String msg) {
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		Notification not = new Notification.Builder(getBaseContext())
-				.setContentTitle("打烏龜囉!").setSmallIcon(R.drawable.ic_launcher)
-				.build();
+				.setContentTitle(title).setContentText(msg)
+				.setSmallIcon(R.drawable.ic_launcher).build();
 		nm.notify(1, not);
 	}
 
@@ -231,8 +231,13 @@ public class MainActivity extends ActionBarActivity implements
 
 			Elements datas = tbl.getElementsByTag("td");
 			for (Element data : datas) {
-				Log.d("for (Element data ", ";  " + data.text());
-				listTD.add(data.text());
+				String item = data.text();
+				if (item.matches(".*[0-9]:[0-9][0-9].*")) {
+					// Representing TIME X:XX & XX:XX
+					item = TimeProc.getShiftedTime(item);
+					Log.d("Element time", item);
+				}
+				listTD.add(item);
 			}
 
 			if (headline.text().contains("飯")) {
@@ -252,7 +257,7 @@ public class MainActivity extends ActionBarActivity implements
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
 
-			setTurtleNotification();
+			setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
 		}
 		return content;
 	}
