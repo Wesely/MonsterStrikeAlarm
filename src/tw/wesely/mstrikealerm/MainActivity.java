@@ -232,10 +232,11 @@ public class MainActivity extends ActionBarActivity implements
 			Elements datas = tbl.getElementsByTag("td");
 			for (Element data : datas) {
 				String item = data.text();
-				if (item.matches(".*[0-9]:[0-9][0-9].*")) {
+				if (item.matches(".*[0-9]:[0-5][0-9].*")) {
 					// Representing TIME X:XX & XX:XX
 					item = TimeProc.getShiftedTime(item);
-					Log.d("Element time", item);
+					data.text(item);
+					Log.d("token time", item);
 				}
 				listTD.add(item);
 			}
