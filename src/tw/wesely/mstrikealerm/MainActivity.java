@@ -34,7 +34,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
@@ -123,7 +122,6 @@ public class MainActivity extends ActionBarActivity implements
 		protected void onPreExecute() {
 			super.onPreExecute();
 			rootLL = (LinearLayout) findViewById(R.id.rootLL);
-
 			mProgressDialog = new ProgressDialog(MainActivity.this);
 			mProgressDialog.setTitle("載入降臨時間");
 			mProgressDialog.setMessage("載入中...");
@@ -167,7 +165,7 @@ public class MainActivity extends ActionBarActivity implements
 			Builder builder = new AlertDialog.Builder(MainActivity.this);
 			// 設定Dialog的標題
 			builder.setTitle("無法分析");
-			builder.setMessage("出現了錯誤或是預料之外的降臨活動，請以下面的表格內容時間為準\n烏龜將無法設定鬧鐘敬請見諒，我們會儘快更新修復。");
+			builder.setMessage("\n目前只能在網路正常的狀況下執行\n也可能是出現了預料之外的降臨活動\n");
 			builder.create().show();
 		}
 	}
@@ -189,7 +187,7 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		if (id > -1 && id < 10)
 			sid = "0" + id;
-		String result = "【ID末兩碼 " + sid + "】" ;
+		String result = "【ID末兩碼 " + sid + "】";
 		tvGroup.setText(result);
 	}
 
@@ -231,7 +229,6 @@ public class MainActivity extends ActionBarActivity implements
 					continue;
 				}
 			}
-
 			if (headline.text().contains("飯")) {
 				Log.d("parseTurtleTable", "飯龜");
 				QuestTurtle tq = new QuestTurtle("【昼の飯より亀の甲？】", listTH,
@@ -264,6 +261,7 @@ public class MainActivity extends ActionBarActivity implements
 
 			// setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
 		}
+
 		return content;
 	}
 
@@ -345,7 +343,7 @@ public class MainActivity extends ActionBarActivity implements
 				SharedPreferences sharedPrefs = PreferenceManager
 						.getDefaultSharedPreferences(getActivity());
 				setTextToMainPage("\n**目前設定的ID尾端兩碼為【"
-						+ sharedPrefs.getInt("ID", 00) + "】");
+						+ sharedPrefs.getInt("ID", -1) + "】");
 				new PlayerID().getSetIDAlertDialog(container, getActivity())
 						.show();
 				break;
