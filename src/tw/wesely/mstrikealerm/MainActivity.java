@@ -2,6 +2,7 @@ package tw.wesely.mstrikealerm;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -12,9 +13,11 @@ import org.jsoup.select.Elements;
 import tw.wesely.mstrikealarm.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.support.v7.app.ActionBarActivity;
@@ -22,10 +25,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -171,11 +176,13 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public void setTurtleNotification(String title, String msg) {
-		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Notification not = new Notification.Builder(getBaseContext())
-				.setContentTitle(title).setContentText(msg)
-				.setSmallIcon(R.drawable.ic_launcher).build();
-		nm.notify(1, not);
+		Intent intentAlarm = new Intent(MainActivity.this, AlarmReceiver.class);
+		Long time = new GregorianCalendar().getTimeInMillis() + 1*10*1000;
+	    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+	    alarmManager.set(AlarmManager.RTC_WAKEUP, time, 
+	    		PendingIntent.getBroadcast(MainActivity.this,1,  
+	    				intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+	    Log.d("notification set", "QQ");
 	}
 
 	public static void setGroupInfo() {
@@ -258,10 +265,10 @@ public class MainActivity extends ActionBarActivity implements
 						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
-
-			// setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
+			
 		}
 
+		setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
 		return content;
 	}
 
