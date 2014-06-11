@@ -15,8 +15,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
@@ -30,7 +28,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,9 +76,9 @@ public class MainActivity extends ActionBarActivity implements
 		sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(MainActivity.this);
 
-		Editor editor = sharedPrefs.edit();
-		editor.clear();
-		editor.commit();
+//		Editor editor = sharedPrefs.edit();
+//		editor.clear();
+//		editor.commit();
 
 	}
 
@@ -155,11 +152,11 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		protected void onPostExecute(Void result) {
 			mProgressDialog.dismiss();
-			setMainpageContent();
+			setMainpageContent(document);
 		}
 	}
 
-	public void setMainpageContent() {
+	public void setMainpageContent(Document document) {
 		rootLL = (LinearLayout) findViewById(R.id.rootLL);
 		tvGroup = (TextView) findViewById(R.id.tvMsg);
 		setGroupInfo();
@@ -177,12 +174,12 @@ public class MainActivity extends ActionBarActivity implements
 
 	public void setTurtleNotification(String title, String msg) {
 		Intent intentAlarm = new Intent(MainActivity.this, AlarmReceiver.class);
-		Long time = new GregorianCalendar().getTimeInMillis() + 1*10*1000;
-	    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-	    alarmManager.set(AlarmManager.RTC_WAKEUP, time, 
-	    		PendingIntent.getBroadcast(MainActivity.this,1,  
-	    				intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
-	    Log.d("notification set", "QQ");
+		Long time = new GregorianCalendar().getTimeInMillis() + 1 * 10 * 1000;
+		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent
+				.getBroadcast(MainActivity.this, 1, intentAlarm,
+						PendingIntent.FLAG_UPDATE_CURRENT));
+		Log.d("notification set", "QQ");
 	}
 
 	public static void setGroupInfo() {
@@ -218,16 +215,23 @@ public class MainActivity extends ActionBarActivity implements
 			Elements fields = tbl.getElementsByTag("th");
 			for (Element field : fields) { // 組
 				listTH.add(field.text());
+				Log.d("fields", "field.text() = "+field.text());
 			}
 
 			Elements datas = tbl.getElementsByTag("td");
 			for (int index = 0; index < datas.size(); index++) {
 				Element data = datas.get(index);
-				if ((index % fields.size()) == 0) { // is Stage Title
+				if (headline.text().contains("亀")) {
+					Log.d("contains(亀)", "data.text()" + data.text());
+					listTDTime.add(TimeProc.getShiftedTime(data.text()));
+					continue;
+				} else if ((index % fields.size()) == 0) { // is Stage Title
+					Log.d("(index % fields.size()) == 0)", data.text());
 					listTDTitle.add(data);
 					continue;
 				}
-				if (data.text().matches(".*[0-9]:[0-5][0-9].*")) {
+				// if (data.text().matches(".*[0-9]:[0-5][0-9].*")) {
+				if ((index % fields.size()) == 1) {
 					// Representing TIME X:XX & XX:XX
 					String item = TimeProc.getShiftedTime(data.text());
 					data.text(item);
@@ -265,10 +269,10 @@ public class MainActivity extends ActionBarActivity implements
 						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
-			
+
 		}
 
-		setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
+		// setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
 		return content;
 	}
 
