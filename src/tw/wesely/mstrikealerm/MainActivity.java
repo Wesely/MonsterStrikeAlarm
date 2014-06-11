@@ -189,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		if (id > -1 && id < 10)
 			sid = "0" + id;
-		String result = "【ID末兩碼 " + sid + "】";
+		String result = "【ID末兩碼 " + sid + "】" ;
 		tvGroup.setText(result);
 	}
 
