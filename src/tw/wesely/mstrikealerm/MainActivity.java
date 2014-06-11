@@ -185,7 +185,7 @@ public class MainActivity extends ActionBarActivity implements
 			Element headline = tbl.previousElementSibling();
 			List<String> listTH = new ArrayList<String>();
 			List<String> listTDTime = new ArrayList<String>();
-			List<String> listTDTitle = new ArrayList<String>();
+			List<Element> listTDTitle = new ArrayList<Element>();//colored
 
 			while (headline != null) {
 				if (headline.tagName() == "h2" || headline.tagName() == "h3")
@@ -201,14 +201,13 @@ public class MainActivity extends ActionBarActivity implements
 			Elements datas = tbl.getElementsByTag("td");
 			for (int index = 0; index < datas.size(); index++) {
 				Element data = datas.get(index);
-				String item = data.text();
 				if ((index % fields.size()) == 0) { // is Stage Title
-					listTDTitle.add(item);
+					listTDTitle.add(data);
 					continue;
 				}
-				if (item.matches(".*[0-9]:[0-5][0-9].*")) {
+				if (data.text().matches(".*[0-9]:[0-5][0-9].*")) {
 					// Representing TIME X:XX & XX:XX
-					item = TimeProc.getShiftedTime(item);
+					String item= TimeProc.getShiftedTime(data.text());
 					data.text(item);
 					Log.d("token time", (index % fields.size()) + ":" + item);
 					listTDTime.add(item);
