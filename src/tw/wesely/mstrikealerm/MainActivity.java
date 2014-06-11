@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -55,6 +56,8 @@ public class MainActivity extends ActionBarActivity implements
 	private CharSequence mTitle;
 	static Context ctx;
 	static Document document;
+	static SharedPreferences sharedPrefs;
+	static TextView tvGroup;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +66,18 @@ public class MainActivity extends ActionBarActivity implements
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
 		mTitle = getTitle();
+		ctx = MainActivity.this;
+		tvGroup = (TextView) findViewById(R.id.tvMsg);
 
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
+		sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(MainActivity.this);
+
+		Editor editor = sharedPrefs.edit();
+		editor.clear();
+		editor.commit();
 
 	}
 
@@ -112,6 +123,7 @@ public class MainActivity extends ActionBarActivity implements
 		protected void onPreExecute() {
 			super.onPreExecute();
 			rootLL = (LinearLayout) findViewById(R.id.rootLL);
+
 			mProgressDialog = new ProgressDialog(MainActivity.this);
 			mProgressDialog.setTitle("載入降臨時間");
 			mProgressDialog.setMessage("載入中...");
@@ -139,20 +151,24 @@ public class MainActivity extends ActionBarActivity implements
 		@SuppressLint("SetJavaScriptEnabled")
 		@Override
 		protected void onPostExecute(Void result) {
-			rootLL = (LinearLayout) findViewById(R.id.rootLL);
-			setGroupInfo();
-			try {
-				parseTurtleTable(document);
-			} catch (Exception e) {
-				e.printStackTrace();
-				Builder builder = new AlertDialog.Builder(MainActivity.this);
-				// 設定Dialog的標題
-				builder.setTitle("無法分析");
-				builder.setMessage("出現了錯誤或是預料之外的降臨活動，請以下面的表格內容時間為準\n烏龜將無法設定鬧鐘敬請見諒，我們會儘快更新修復。");
-				builder.create().show();
-			}
-
 			mProgressDialog.dismiss();
+			setMainpageContent();
+		}
+	}
+
+	public void setMainpageContent() {
+		rootLL = (LinearLayout) findViewById(R.id.rootLL);
+		tvGroup = (TextView) findViewById(R.id.tvMsg);
+		setGroupInfo();
+		try {
+			parseTurtleTable(document);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Builder builder = new AlertDialog.Builder(MainActivity.this);
+			// 設定Dialog的標題
+			builder.setTitle("無法分析");
+			builder.setMessage("出現了錯誤或是預料之外的降臨活動，請以下面的表格內容時間為準\n烏龜將無法設定鬧鐘敬請見諒，我們會儘快更新修復。");
+			builder.create().show();
 		}
 	}
 
@@ -164,15 +180,16 @@ public class MainActivity extends ActionBarActivity implements
 		nm.notify(1, not);
 	}
 
-	public void setGroupInfo() {
-		SharedPreferences sharedPrefs = PreferenceManager
-				.getDefaultSharedPreferences(MainActivity.this);
-		TextView tvGroup = (TextView) findViewById(R.id.tvMsg);
+	public static void setGroupInfo() {
 		int id = sharedPrefs.getInt("ID", -1);
-		int riceGroup = (id % 4);
-		int yearGroup = (id % 5);
-		String result = "【ID末兩碼 " + id + " 所屬組別】" + "\n年龜：" + yearGroup + "組\n"
-				+ "飯龜：" + riceGroup + "組";
+		String sid = id + "";
+		if (id < 0) {
+			setTextToMainPage("請點選左上選單設定ID");
+			return;
+		}
+		if (id > -1 && id < 10)
+			sid = "0" + id;
+		String result = "【ID末兩碼 " + sid + "】";
 		tvGroup.setText(result);
 	}
 
@@ -185,7 +202,7 @@ public class MainActivity extends ActionBarActivity implements
 			Element headline = tbl.previousElementSibling();
 			List<String> listTH = new ArrayList<String>();
 			List<String> listTDTime = new ArrayList<String>();
-			List<Element> listTDTitle = new ArrayList<Element>();//colored
+			List<Element> listTDTitle = new ArrayList<Element>();// colored
 
 			while (headline != null) {
 				if (headline.tagName() == "h2" || headline.tagName() == "h3")
@@ -207,7 +224,7 @@ public class MainActivity extends ActionBarActivity implements
 				}
 				if (data.text().matches(".*[0-9]:[0-5][0-9].*")) {
 					// Representing TIME X:XX & XX:XX
-					String item= TimeProc.getShiftedTime(data.text());
+					String item = TimeProc.getShiftedTime(data.text());
 					data.text(item);
 					Log.d("token time", (index % fields.size()) + ":" + item);
 					listTDTime.add(item);

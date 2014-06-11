@@ -34,6 +34,7 @@ public class QuestTurtle {
 	public View getTurtleStageChartView(Context ctx) {
 		SharedPreferences sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(ctx);
+		int id = sharedPrefs.getInt("ID", -1);
 		LayoutInflater inflater = (LayoutInflater) ctx
 				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.item_questchart, null);
@@ -43,7 +44,7 @@ public class QuestTurtle {
 		tvTitle.setText(this.title);
 		int group = sharedPrefs.getInt("ID", 00) % (listTD.size());
 		Log.d("getTurtleStageChartView", "id = " + sharedPrefs.getInt("ID", 00));
-		Log.d("getTurtleStageChartView", "size = " + listTD.size());
+		Log.d("getTurtleStageChartView", "#group = " + (listTD.size()));
 
 		final List<View> listNotMyGroup = new ArrayList<View>();
 		for (int i = 0; i < listTD.size(); i++) {
@@ -53,7 +54,9 @@ public class QuestTurtle {
 			TextView tvTime = (TextView) subView.findViewById(R.id.tvBot);
 			tvGroup.setText(listTH.get(i));
 			tvTime.setText(listTD.get(i));
-			if (i == group) {
+			if (id < 0) {
+
+			} else if (i == group) {
 				tvGroup.setTextColor(0xFF00BB00);
 				tvTime.setTextColor(0xFF00BB00);
 			} else {

@@ -9,7 +9,6 @@
     tools:context="tw.wesely.mstrikealerm.MainActivity$PlaceholderFragment" >
 
     <LinearLayout
-        android:id="@+id/rootLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
@@ -20,6 +19,12 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
+        <LinearLayout
+            android:id="@+id/rootLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

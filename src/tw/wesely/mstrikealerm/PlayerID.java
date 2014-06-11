@@ -47,13 +47,14 @@ public class PlayerID {
 					ID = Integer.valueOf(etID.getText().toString());
 					editor.putInt("ID", ID);
 					editor.commit();
+					// MainActivity.setMainpageContent();
 					MainActivity.setTextToMainPage("\n**目前設定的ID尾端兩碼為【" + ID
 							+ "】");
 				}
 			}
 		});
 		// 設定Negative按鈕資料
-		builder.setNegativeButton("放棄", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("先不要", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
