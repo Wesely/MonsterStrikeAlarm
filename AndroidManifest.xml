@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         
-        <receiver android:name="tw.wesely.mstrikealerm.AlarmReceiver"/>
+        <receiver android:name="tw.wesely.mstrikealerm.TurtleAlarmReceiver"/>
     </application>
 
 </manifest>
