@@ -1,7 +1,10 @@
 package tw.wesely.mstrikealerm;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -42,7 +45,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
-@SuppressLint("NewApi")
+@SuppressLint({ "NewApi", "SimpleDateFormat" })
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
 
@@ -176,14 +179,14 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
-	public void setTurtleNotification(String title, String msg) {
-		Intent intentAlarm = new Intent(MainActivity.this, AlarmReceiver.class);
-		Long time = new GregorianCalendar().getTimeInMillis() + 1 * 10 * 1000;
-		AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent
-				.getBroadcast(MainActivity.this, 1, intentAlarm,
-						PendingIntent.FLAG_UPDATE_CURRENT));
-		Log.d("notification set", "QQ");
+
+	public void setTurtleNotification(String title, String msg, Long time) {
+		Intent intentAlarm = new Intent(MainActivity.this, TurtleAlarmReceiver.class);
+	    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+	    alarmManager.set(AlarmManager.RTC_WAKEUP, time, 
+	    		PendingIntent.getBroadcast(MainActivity.this,1,  
+	    				intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+	    Log.d("notify", "set alarm");
 	}
 
 	public static void setGroupInfo() {
@@ -248,6 +251,15 @@ public class MainActivity extends ActionBarActivity implements
 				Log.d("parseTurtleTable", "飯龜");
 				QuestTurtle tq = new QuestTurtle("【昼の飯より亀の甲？】", listTH,
 						listTDTime);
+				
+				for(String td : listTDTime) {
+					String[] tokens = td.split("[-()]");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String date = sdf.format(Calendar.getInstance().getTime());
+					Long time = Timestamp.valueOf(date + " " + tokens[0]+":00").getTime();
+					Log.d("not time", String.valueOf(time));
+					setTurtleNotification("打烏龜囉！", "飯龜", time);
+				}
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
 			if (headline.text().contains("年")) {
@@ -255,12 +267,30 @@ public class MainActivity extends ActionBarActivity implements
 				QuestTurtle tq = new QuestTurtle("【年の功より亀の甲？】", listTH,
 						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+				
+				for(String td : listTDTime) {
+					String[] tokens = td.split("[-()]");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String date = sdf.format(Calendar.getInstance().getTime());
+					Long time = Timestamp.valueOf(date + " " + tokens[0]+":00").getTime();
+					Log.d("not time", String.valueOf(time));
+					setTurtleNotification("打烏龜囉！", "飯龜", time);
+				}
 			}
 			if (headline.text().contains("マン")) {
 				Log.d("parseTurtleTable", "超大龜");
 				QuestTurtle tq = new QuestTurtle("【マンの亀よりオクの甲？】", listTH,
 						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+				
+				for(String td : listTDTime) {
+					String[] tokens = td.split("[-()]");
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					String date = sdf.format(Calendar.getInstance().getTime());
+					Long time = Timestamp.valueOf(date + " " + tokens[0]+":00").getTime();
+					Log.d("not time", String.valueOf(time));
+					setTurtleNotification("打烏龜囉！", "飯龜", time);
+				}
 			}
 			if (headline.text().contains("開催中")) {
 				Log.d("parseTurtleTable", "開催中");
@@ -275,8 +305,6 @@ public class MainActivity extends ActionBarActivity implements
 			}
 
 		}
-
-		// setTurtleNotification("打烏龜囉！", "【マンの亀よりオクの甲？】");
 		return content;
 	}
 
