@@ -70,10 +70,35 @@ public class MonsterWebView extends WebView {
 					title = document.title();
 
 					// Replace all hypertext to absolute link
-					// Elements links = document.getElementsByTag("a");
-					// for (Element link : links)
-					// link.attr("href",
-					// "http://monst.appbank.net" + link.attr("href"));
+					Elements bodies = document.getElementsByTag("body");
+					for(Element body : bodies) {
+						Element wrapper = body.getElementById("wrapper");
+						for(Element element : wrapper.children())
+							if(element.tagName()  != "section") {
+								Log.d("show remove", element.tagName());
+								element.remove();
+							}
+					}
+					Elements links = document.getElementsByAttribute("href");
+					for (Element link : links)
+						link.attr("href",
+							"http://monst.appbank.net" + link.attr("href"));
+					
+					// Replace all hypertext to absolute link in div
+					Element section = document.getElementById("monster");
+					Elements divs = section.getElementsByClass("char");
+					for(Element div : divs) {
+						Element background = div.child(0);
+						String attr = background.attr("style");
+						Log.d("attr", attr);
+						String url = attr.substring(attr.indexOf('(') + 2, 
+								attr.indexOf(')') - 2 );
+						Log.d("attr url", url);
+						attr = attr.replace(url, 
+								"http://monst.appbank.net" + url);
+						Log.d("attr after", attr);
+						background.attr("style", attr);
+					}
 
 					if (isCancelled())
 						break;
@@ -92,15 +117,16 @@ public class MonsterWebView extends WebView {
 			mProgressDialog.dismiss();
 			Elements sections = document.getElementsByTag("section");
 			for (Element section : sections) {
+				Element leftside = section.child(0);
+				leftside.remove();
 				Elements imgs = section.getElementsByTag("img");
 				for (Element img : imgs)
 					img.attr("src",
 							"http://monst.appbank.net" + img.attr("src"));
-
 			}
 
-			Log.d("show html", sections.html());
-			loadTranslatedData(sections.html());
+			Log.d("show html", document.html());
+			loadTranslatedData(document.html());
 		}
 
 	}
