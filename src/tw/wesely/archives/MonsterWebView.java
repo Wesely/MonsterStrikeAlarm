@@ -88,7 +88,7 @@ public class MonsterWebView extends WebView {
 					// Get the HTML document title
 					title = document.title();
 
-					// Replace all hypertext to absolute link
+					// Remove redundant information
 					Elements bodies = document.getElementsByTag("body");
 					for (Element body : bodies) {
 						Element wrapper = body.getElementById("wrapper");
@@ -98,6 +98,8 @@ public class MonsterWebView extends WebView {
 								element.remove();
 							}
 					}
+					
+					// Replace all hypertext to absolute link
 					Elements links = document.getElementsByAttribute("href");
 					for (Element link : links)
 						link.attr("href",
