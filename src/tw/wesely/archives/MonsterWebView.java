@@ -26,17 +26,16 @@ public class MonsterWebView extends WebView {
 
 	public MonsterWebView(Context context) {
 		super(context);
+		this.setWebViewClient(new MonsterArchiveWebViewClient());
 	}
 
-	private class MyWebViewClient extends WebViewClient {
+	private class MonsterArchiveWebViewClient extends WebViewClient {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			view.loadUrl(url);
 			return true;
-
 		}
-
 	}
 
 	@Override

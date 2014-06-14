@@ -5,13 +5,15 @@
 
     <!--
     <item
-        android:id="@+id/action_set_id"
-        android:title="@string/action_id"
-        app:showAsAction="withText|ifRoom"/>
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_action_search"
+        android:title="@string/search"
+        yourapp:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never"/>    -->
+        app:showAsAction="never"/>
+    -->
 
 </menu>
