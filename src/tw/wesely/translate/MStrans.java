@@ -56,6 +56,8 @@ public class MStrans {
 		translated = translated.replace("アクシス", "軸心國");
 		translated = translated.replace("ユニオン", "同盟國");
 		translated = translated.replace("キラー", "殺手");
+		translated = translated.replace("サムライ", "武士");
+		translated = translated.replace("バランス", "均衡");
 
 		return translated;
 	}
