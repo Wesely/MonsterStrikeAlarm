@@ -70,10 +70,26 @@ public class MonsterWebView extends WebView {
 					title = document.title();
 
 					// Replace all hypertext to absolute link
-					// Elements links = document.getElementsByTag("a");
-					// for (Element link : links)
-					// link.attr("href",
-					// "http://monst.appbank.net" + link.attr("href"));
+					Elements links = document.getElementsByTag("a");
+					for (Element link : links)
+						link.attr("href",
+							"http://monst.appbank.net" + link.attr("href"));
+					
+					// Replace all hypertext to absolute link in div
+					Element section = document.getElementById("monster");
+					Elements divs = section.getElementsByClass("char");
+					for(Element div : divs) {
+						Element background = div.child(0);
+						String attr = background.attr("style");
+						Log.d("attr", attr);
+						String url = attr.substring(attr.indexOf('(') + 2, 
+								attr.indexOf(')') - 2 );
+						Log.d("attr url", url);
+						attr = attr.replace(url, 
+								"http://monst.appbank.net" + url);
+						Log.d("attr after", attr);
+						background.attr("style", attr);
+					}
 
 					if (isCancelled())
 						break;
