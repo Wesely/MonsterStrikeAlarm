@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import tw.wesely.archives.MonsterArchive;
 import tw.wesely.mstrikealarm.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -76,9 +78,9 @@ public class MainActivity extends ActionBarActivity implements
 		sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(MainActivity.this);
 
-//		Editor editor = sharedPrefs.edit();
-//		editor.clear();
-//		editor.commit();
+		// Editor editor = sharedPrefs.edit();
+		// editor.clear();
+		// editor.commit();
 
 	}
 
@@ -106,6 +108,8 @@ public class MainActivity extends ActionBarActivity implements
 			break;
 		case 4:
 			mTitle = getString(R.string.title_section4);
+		case 5:
+			mTitle = getString(R.string.title_section5);
 		}
 	}
 
@@ -215,7 +219,7 @@ public class MainActivity extends ActionBarActivity implements
 			Elements fields = tbl.getElementsByTag("th");
 			for (Element field : fields) { // 組
 				listTH.add(field.text());
-				Log.d("fields", "field.text() = "+field.text());
+				Log.d("fields", "field.text() = " + field.text());
 			}
 
 			Elements datas = tbl.getElementsByTag("td");
@@ -367,7 +371,7 @@ public class MainActivity extends ActionBarActivity implements
 						.findViewById(R.id.rootLL);
 				TextView tvHeader2 = (TextView) inflater.inflate(
 						R.layout.component_headertextview, null);
-				tvHeader2.setText("【現正降臨中！】\n*取自日文版攻略網\n點選連結會前往日版網站");
+				tvHeader2.setText("【今日降臨！】\n*取自日文版攻略網\n點選連結會前往日版網站");
 				LayoutParams params = new LayoutParams(
 						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 				params.setMargins(0, 30, 0, 0);
@@ -394,6 +398,18 @@ public class MainActivity extends ActionBarActivity implements
 								+ document.select("table").get(3).html()
 								+ "</table>", "text/html", "UTF-8", "");
 				rootLL.addView(wv);
+				break;
+			case 5:
+				textView.setText("需要有穩定的網路連線才能點開圖鑑");
+				MonsterArchive ma = new MonsterArchive();
+				rootLL = (LinearLayout) rootView.findViewById(R.id.rootLL);
+
+				LayoutParams param = new LayoutParams(
+						LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+				param.setMargins(0, 0, 0, 0);
+				rootLL.setLayoutParams(param);
+				rootLL.addView(ma.getArchiveView(inflater, container,
+						getActivity()),param);
 				break;
 			}
 			return rootView;

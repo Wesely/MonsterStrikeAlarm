@@ -6,10 +6,12 @@
     <string name="title_section4">ID設定</string>
     <string name="title_section3">關於</string>
     <string name="title_section2">降臨詳細資訊</string>
+    <string name="title_section5">New！ 怪物圖鑑</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_id">設定ID</string>
     <string name="action_settings">Settings</string>
+    <string name="activity_archive">圖鑑</string>
     <string name="about">        【關於】\n
  	提供設定日版ID功能，自動從網站上更新每日烏龜與降臨資訊。\n但預測時間未必精準，僅供參考。\n\n
  	【使用方式】\n
