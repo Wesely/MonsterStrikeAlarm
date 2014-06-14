@@ -70,7 +70,16 @@ public class MonsterWebView extends WebView {
 					title = document.title();
 
 					// Replace all hypertext to absolute link
-					Elements links = document.getElementsByTag("a");
+					Elements bodies = document.getElementsByTag("body");
+					for(Element body : bodies) {
+						Element wrapper = body.getElementById("wrapper");
+						for(Element element : wrapper.children())
+							if(element.tagName()  != "section") {
+								Log.d("show remove", element.tagName());
+								element.remove();
+							}
+					}
+					Elements links = document.getElementsByAttribute("href");
 					for (Element link : links)
 						link.attr("href",
 							"http://monst.appbank.net" + link.attr("href"));
@@ -108,15 +117,16 @@ public class MonsterWebView extends WebView {
 			mProgressDialog.dismiss();
 			Elements sections = document.getElementsByTag("section");
 			for (Element section : sections) {
+				Element leftside = section.child(0);
+				leftside.remove();
 				Elements imgs = section.getElementsByTag("img");
 				for (Element img : imgs)
 					img.attr("src",
 							"http://monst.appbank.net" + img.attr("src"));
-
 			}
 
-			Log.d("show html", sections.html());
-			loadTranslatedData(sections.html());
+			Log.d("show html", document.html());
+			loadTranslatedData(document.html());
 		}
 
 	}
