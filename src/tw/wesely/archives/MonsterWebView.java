@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 
 import tw.wesely.mstrikealarm.R;
 import tw.wesely.mstrikealerm.MainActivity;
+import tw.wesely.translate.MStrans;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -16,6 +17,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
 public class MonsterWebView extends WebView {
@@ -26,6 +28,22 @@ public class MonsterWebView extends WebView {
 		super(context);
 	}
 
+	private class MyWebViewClient extends WebViewClient {
+
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			view.loadUrl(url);
+			return true;
+
+		}
+
+	}
+
+	@Override
+	public void loadUrl(String url){
+		loadMonsterSection(url);
+	}
+	
 	public void loadMonsterById(String id) {
 		Log.d("MonsterWebView", "loadMonsterById , No." + id);
 		monsterID = id;
@@ -39,7 +57,8 @@ public class MonsterWebView extends WebView {
 	}
 
 	public void loadTranslatedData(String data) {
-		this.loadDataWithBaseURL(null, data, "text/html", "utf-8", null);
+		this.loadDataWithBaseURL(null, new MStrans().getTranslated(data),
+				"text/html", "utf-8", null);
 	}
 
 	// Title AsyncTask
@@ -71,10 +90,10 @@ public class MonsterWebView extends WebView {
 
 					// Remove redundant information
 					Elements bodies = document.getElementsByTag("body");
-					for(Element body : bodies) {
+					for (Element body : bodies) {
 						Element wrapper = body.getElementById("wrapper");
-						for(Element element : wrapper.children())
-							if(element.tagName()  != "section") {
+						for (Element element : wrapper.children())
+							if (element.tagName() != "section") {
 								Log.d("show remove", element.tagName());
 								element.remove();
 							}
@@ -84,20 +103,20 @@ public class MonsterWebView extends WebView {
 					Elements links = document.getElementsByAttribute("href");
 					for (Element link : links)
 						link.attr("href",
-							"http://monst.appbank.net" + link.attr("href"));
-					
+								"http://monst.appbank.net" + link.attr("href"));
+
 					// Replace all hypertext to absolute link in div
 					Element section = document.getElementById("monster");
 					Elements divs = section.getElementsByClass("char");
-					for(Element div : divs) {
+					for (Element div : divs) {
 						Element background = div.child(0);
 						String attr = background.attr("style");
 						Log.d("attr", attr);
-						String url = attr.substring(attr.indexOf('(') + 2, 
-								attr.indexOf(')') - 2 );
+						String url = attr.substring(attr.indexOf('(') + 2,
+								attr.indexOf(')') - 2);
 						Log.d("attr url", url);
-						attr = attr.replace(url, 
-								"http://monst.appbank.net" + url);
+						attr = attr.replace(url, "http://monst.appbank.net"
+								+ url);
 						Log.d("attr after", attr);
 						background.attr("style", attr);
 					}
