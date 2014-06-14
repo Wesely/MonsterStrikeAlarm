@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class AlarmReceiver extends BroadcastReceiver {
+public class TurtleAlarmReceiver extends BroadcastReceiver {
 
 	@SuppressLint("NewApi")
 	@Override
@@ -17,7 +17,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 		String title = "•¥ØQ¿t≈o!";
 		String msg = "QQ";
 		
-		Log.d("notification rec", "WWWW");
+		Log.d("notify", "alarm receive");
 		NotificationManager nm = (NotificationManager) arg0.getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification = new Notification.Builder(arg0)
 				.setContentTitle(title)
