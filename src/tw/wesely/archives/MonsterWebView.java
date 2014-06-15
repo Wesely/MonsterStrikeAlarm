@@ -7,8 +7,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import tw.wesely.mstrikealarm.R;
-import tw.wesely.mstrikealerm.MainActivity;
 import tw.wesely.translate.MStrans;
 
 import android.annotation.SuppressLint;
@@ -18,7 +16,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
 
 public class MonsterWebView extends WebView {
 
@@ -55,8 +52,8 @@ public class MonsterWebView extends WebView {
 
 	}
 
-	public void loadTranslatedData(String data) {
-		this.loadDataWithBaseURL(null, new MStrans().getTranslated(data),
+	public void loadTranslatedData(String data) throws IOException {
+		this.loadDataWithBaseURL(null, MStrans.getTranslated(data, this.getContext()),
 				"text/html", "utf-8", null);
 	}
 
@@ -146,7 +143,12 @@ public class MonsterWebView extends WebView {
 			}
 
 			Log.d("show html", document.html());
-			loadTranslatedData(document.html());
+			try {
+				loadTranslatedData(document.html());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

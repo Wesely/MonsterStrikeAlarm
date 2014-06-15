@@ -1,7 +1,6 @@
 package tw.wesely.mstrikealerm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import tw.wesely.mstrikealarm.R;
@@ -14,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
