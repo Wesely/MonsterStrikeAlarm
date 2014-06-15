@@ -181,12 +181,13 @@ public class MainActivity extends ActionBarActivity implements
 
 
 	public void setTurtleNotification(String title, String msg, Long time) {
-		Intent intentAlarm = new Intent(MainActivity.this, TurtleAlarmReceiver.class);
-	    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-	    alarmManager.set(AlarmManager.RTC_WAKEUP, time, 
-	    		PendingIntent.getBroadcast(MainActivity.this,1,  
-	    				intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
-	    Log.d("notify", "set alarm");
+		return;
+//		Intent intentAlarm = new Intent(MainActivity.this, TurtleAlarmReceiver.class);
+//	    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//	    alarmManager.set(AlarmManager.RTC_WAKEUP, time, 
+//	    		PendingIntent.getBroadcast(MainActivity.this,1,  
+//	    				intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+//	    Log.d("notify", "set alarm");
 	}
 
 	public static void setGroupInfo() {
