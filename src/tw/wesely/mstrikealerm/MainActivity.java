@@ -15,6 +15,7 @@ import org.jsoup.select.Elements;
 
 import tw.wesely.archives.MonsterArchive;
 import tw.wesely.mstrikealarm.R;
+import tw.wesely.translate.MStrans;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -145,6 +146,7 @@ public class MainActivity extends ActionBarActivity implements
 				document = Jsoup.connect(url).get();
 				// Get the html document title
 				title = document.title();
+				document.html( MStrans.getTranslated(document.html()) );
 				// Replace all hypertext to absolute link
 				Elements links = document.getElementsByTag("a");
 				for (Element link : links)
@@ -251,7 +253,7 @@ public class MainActivity extends ActionBarActivity implements
 				Log.d("parseTurtleTable", "飯龜");
 				QuestTurtle tq = new QuestTurtle("【昼の飯より亀の甲？】", listTH,
 						listTDTime);
-				
+				/*
 				for(String td : listTDTime) {
 					String[] tokens = td.split("[-()]");
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -260,6 +262,7 @@ public class MainActivity extends ActionBarActivity implements
 					Log.d("not time", String.valueOf(time));
 					setTurtleNotification("打烏龜囉！", "飯龜", time);
 				}
+				*/
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
 			if (headline.text().contains("年")) {
@@ -268,6 +271,7 @@ public class MainActivity extends ActionBarActivity implements
 						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 				
+				/*
 				for(String td : listTDTime) {
 					String[] tokens = td.split("[-()]");
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -276,6 +280,7 @@ public class MainActivity extends ActionBarActivity implements
 					Log.d("not time", String.valueOf(time));
 					setTurtleNotification("打烏龜囉！", "飯龜", time);
 				}
+				*/
 			}
 			if (headline.text().contains("マン")) {
 				Log.d("parseTurtleTable", "超大龜");
@@ -283,6 +288,7 @@ public class MainActivity extends ActionBarActivity implements
 						listTDTime);
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 				
+				/*
 				for(String td : listTDTime) {
 					String[] tokens = td.split("[-()]");
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -291,6 +297,7 @@ public class MainActivity extends ActionBarActivity implements
 					Log.d("not time", String.valueOf(time));
 					setTurtleNotification("打烏龜囉！", "飯龜", time);
 				}
+				*/
 			}
 			if (headline.text().contains("開催中")) {
 				Log.d("parseTurtleTable", "開催中");
