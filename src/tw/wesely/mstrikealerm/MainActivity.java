@@ -1,11 +1,7 @@
 package tw.wesely.mstrikealerm;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -30,7 +26,6 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -42,7 +37,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -146,7 +140,7 @@ public class MainActivity extends ActionBarActivity implements
 				document = Jsoup.connect(url).get();
 				// Get the html document title
 				title = document.title();
-				document.html( MStrans.getTranslated(document.html()) );
+				document.html( MStrans.getTranslated(document.html(), MainActivity.this) );
 				// Replace all hypertext to absolute link
 				Elements links = document.getElementsByTag("a");
 				for (Element link : links)
