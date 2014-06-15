@@ -55,7 +55,7 @@ public class MonsterWebView extends WebView {
 
 	}
 
-	public void loadTranslatedData(String data) {
+	public void loadTranslatedData(String data) throws IOException {
 		this.loadDataWithBaseURL(null, new MStrans().getTranslated(data),
 				"text/html", "utf-8", null);
 	}
@@ -146,7 +146,12 @@ public class MonsterWebView extends WebView {
 			}
 
 			Log.d("show html", document.html());
-			loadTranslatedData(document.html());
+			try {
+				loadTranslatedData(document.html());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

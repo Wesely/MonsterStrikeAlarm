@@ -1,8 +1,9 @@
 package tw.wesely.translate;
 
-public class MStrans {
+import java.io.IOException;
 
-	public String getTranslated(String orgText) {
+public class MStrans {
+	public static String getTranslated(String orgText) throws IOException {
 		String translated = orgText;
 		translated = translated.replace("仲間を弾いて敵へ撃ちこむ", "將隊友彈出以攻擊敵人（被彈出者無視毒牆）");
 		translated = translated.replace("仲間にふれると", "撞擊到隊友的話");
@@ -32,7 +33,7 @@ public class MStrans {
 		translated = translated.replace("ステータス", "基本資料");
 		translated = translated.replace("アビリティ", "特殊能力");
 		translated = translated.replace("アンチダメージウォール ", "毒牆免疫");
-		translated = translated.replace("アンチ重力バリア", "重力盾免疫");
+		translated = translated.replace("アンチ重力バリア", "重力場免疫");
 		translated = translated.replace("クロスレーザー", "X字雷射");
 		translated = translated.replace("レーザー", "雷射");
 		translated = translated.replace("ホーミング", "追蹤彈");
