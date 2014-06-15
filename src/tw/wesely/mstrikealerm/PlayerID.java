@@ -28,14 +28,14 @@ public class PlayerID {
 		View contentView = inflater.inflate(R.layout.dialog_setgroup,
 				container, false);
 		final EditText etID = (EditText) contentView.findViewById(R.id.etID);
-		// ²£¥Í¤@­ÓBuilderª«¥ó
+		// ï¿½ï¿½ï¿½Í¤@ï¿½ï¿½Builderï¿½ï¿½ï¿½ï¿½
 		Builder builder = new AlertDialog.Builder(ctx);
-		// ³]©wDialogªº¼ĞÃD
-		builder.setTitle("³]©w²Õ§O");
-		// ³]©wDialogªº¤º®e
+		// ï¿½]ï¿½wDialogï¿½ï¿½ï¿½ï¿½ï¿½D
+		builder.setTitle("Set ID");
+		// ï¿½]ï¿½wDialogï¿½ï¿½ï¿½ï¿½ï¿½e
 		builder.setView(contentView);
-		// ³]©wPositive«ö¶s¸ê®Æ
-		builder.setPositiveButton("½T»{", new DialogInterface.OnClickListener() {
+		// ï¿½]ï¿½wPositiveï¿½ï¿½ï¿½sï¿½ï¿½ï¿½
+		builder.setPositiveButton("ç¢ºå®š", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				SharedPreferences sharedPrefs = PreferenceManager
@@ -48,13 +48,13 @@ public class PlayerID {
 					editor.putInt("ID", ID);
 					editor.commit();
 					// MainActivity.setMainpageContent();
-					MainActivity.setTextToMainPage("\n**¥Ø«e³]©wªºID§Àºİ¨â½X¬°¡i" + ID
-							+ "¡j");
+					MainActivity.setTextToMainPage("ã€ç¾åœ¨è¨­å®šçš„IDæœ«å…©ç¢¼ç‚º " + ID
+							+ " ã€‘");
 				}
 			}
 		});
-		// ³]©wNegative«ö¶s¸ê®Æ
-		builder.setNegativeButton("¥ı¤£­n", new DialogInterface.OnClickListener() {
+		// ï¿½]ï¿½wNegativeï¿½ï¿½ï¿½sï¿½ï¿½ï¿½
+		builder.setNegativeButton("æ²’äº‹", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();

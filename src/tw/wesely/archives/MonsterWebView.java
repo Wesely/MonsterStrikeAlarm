@@ -67,8 +67,8 @@ public class MonsterWebView extends WebView {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			mProgressDialog = new ProgressDialog(getContext());
-			mProgressDialog.setTitle("載入圖鑑資料");
-			mProgressDialog.setMessage("No." + monsterID + " ,載入中...");
+			mProgressDialog.setTitle("Loading");
+			mProgressDialog.setMessage("No." + monsterID + " ,Loading...");
 			mProgressDialog.setIndeterminate(false);
 			mProgressDialog.show();
 		}

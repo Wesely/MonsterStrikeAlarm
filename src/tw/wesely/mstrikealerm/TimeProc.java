@@ -15,6 +15,6 @@ public class TimeProc {
 				strTime = strTime.replace(str, replacement);
 			}
 		}
-		return strTime+"(¥x)";
+		return strTime+"(å°)";
 	}
 }

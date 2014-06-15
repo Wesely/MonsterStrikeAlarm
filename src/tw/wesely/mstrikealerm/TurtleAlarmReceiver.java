@@ -14,8 +14,8 @@ public class TurtleAlarmReceiver extends BroadcastReceiver {
 	@SuppressLint("NewApi")
 	@Override
 	public void onReceive(Context arg0, Intent arg1) {
-		String title = "¥´¯QÀtÅo!";
-		String msg = "QQ";
+		String title = "æ‰“çƒé¾œæ™‚é–“";
+		String msg = "Fight";
 		
 		Log.d("notify", "alarm receive");
 		NotificationManager nm = (NotificationManager) arg0.getSystemService(Context.NOTIFICATION_SERVICE);
