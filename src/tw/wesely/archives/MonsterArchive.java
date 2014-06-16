@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import tw.wesely.mstrikealarm.R;
+import tw.wesely.util.ExpandableHeightGridView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,15 +17,17 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 public class MonsterArchive {
 
-	public View getArchiveView(LayoutInflater inflater, View root, final Context ctx) {
-		LinearLayout LL = (LinearLayout) inflater.inflate(
+	public View getArchiveView(LayoutInflater inflater, View root,
+			final Context ctx) {
+		
+		ExpandableHeightGridView gvArchive = (ExpandableHeightGridView) inflater.inflate(
 				R.layout.view_archive, null);
-		GridView gvArchive = (GridView) LL.findViewById(R.id.gvArchive);
 		List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < image.length; i++) {
 			Map<String, Object> item = new HashMap<String, Object>();
@@ -37,21 +40,21 @@ public class MonsterArchive {
 				R.layout.grid_item, new String[] { "image", "text" },
 				new int[] { R.id.image, R.id.text });
 
-		gvArchive.setNumColumns(3);
 		gvArchive.setAdapter(adapter);
 		gvArchive.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				String monsterID = imgText[position].replace("No.", "");
-				Log.d("MonsterArchive", "start Activity with monster ID = No." + monsterID);
+				Log.d("MonsterArchive", "start Activity with monster ID = No."
+						+ monsterID);
 				Intent intent = new Intent(ctx, ArchiveDetailActivity.class);
 				intent.putExtra("monsterID", monsterID);
 				ctx.startActivity(intent);
 			}
 
 		});
-
-		return LL;
+		gvArchive.setExpanded(true);
+		return gvArchive;
 	}
 
 	private int[] image = { R.drawable.icon_1, R.drawable.icon_2,
