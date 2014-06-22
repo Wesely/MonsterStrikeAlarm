@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tw.wesely.util.ExpandableHeightGridView xmlns:android="http://schemas.android.com/apk/res/android"
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/gvArchive"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:horizontalSpacing="2dp"
-    android:isScrollContainer="false"
+    android:isScrollContainer="true"
     android:background="@drawable/input_text_area"
     android:numColumns="3"
     android:stretchMode="columnWidth"

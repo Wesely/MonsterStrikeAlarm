@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import tw.wesely.archives.ArchiveDetailActivity;
 import tw.wesely.archives.MonsterArchive;
 import tw.wesely.mstrikealarm.R;
 import tw.wesely.translate.MStrans;
@@ -430,16 +431,20 @@ public class MainActivity extends ActionBarActivity implements
 				rootLL.addView(wv);
 				break;
 			case 5:
-				textView.setText("需要有穩定的網路連線才能點開圖鑑");
-				MonsterArchive ma = new MonsterArchive();
-				rootLL = (LinearLayout) rootView.findViewById(R.id.rootLL);
 
-				LayoutParams param = new LayoutParams(
-						LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-				param.setMargins(0, 0, 0, 0);
-				rootLL.setLayoutParams(param);
-				rootLL.addView(ma.getArchiveView(inflater, container,
-						getActivity()),param);
+				Intent intent = new Intent(ctx, MonsterArchive.class);
+				ctx.startActivity(intent);
+				
+//				textView.setText("需要有穩定的網路連線才能點開圖鑑");
+//				MonsterArchive ma = new MonsterArchive();
+//				rootLL = (LinearLayout) rootView.findViewById(R.id.rootLL);
+//
+//				LayoutParams param = new LayoutParams(
+//						LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//				param.setMargins(0, 0, 0, 0);
+//				rootLL.setLayoutParams(param);
+//				rootLL.addView(ma.getArchiveView(inflater, container,
+//						getActivity()),param);
 				break;
 			}
 			return rootView;

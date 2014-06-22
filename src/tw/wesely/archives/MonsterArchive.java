@@ -1,5 +1,6 @@
 package tw.wesely.archives;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,8 +8,11 @@ import java.util.Map;
 
 import tw.wesely.mstrikealarm.R;
 import tw.wesely.util.ExpandableHeightGridView;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,18 +20,22 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-public class MonsterArchive {
+public class MonsterArchive extends Activity {
+	GridView gvArchive;
+	Context ctx;
 
-	public View getArchiveView(LayoutInflater inflater, View root,
-			final Context ctx) {
-		
-		ExpandableHeightGridView gvArchive = (ExpandableHeightGridView) inflater.inflate(
-				R.layout.view_archive, null);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.view_archive);
+		ctx = MonsterArchive.this;
+		gvArchive = (GridView) findViewById(R.id.gvArchive);
 		List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < image.length; i++) {
 			Map<String, Object> item = new HashMap<String, Object>();
@@ -53,7 +61,38 @@ public class MonsterArchive {
 			}
 
 		});
-		gvArchive.setExpanded(true);
+
+	}
+
+	public View getArchiveView(LayoutInflater inflater, View root,
+			final Context ctx) {
+
+		gvArchive = (GridView) inflater.inflate(R.layout.view_archive, null);
+		List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < image.length; i++) {
+			Map<String, Object> item = new HashMap<String, Object>();
+			item.put("image", image[i]);
+			item.put("text", imgText[i]);
+			items.add(item);
+		}
+
+		SimpleAdapter adapter = new SimpleAdapter(ctx, items,
+				R.layout.grid_item, new String[] { "image", "text" },
+				new int[] { R.id.image, R.id.text });
+
+		gvArchive.setAdapter(adapter);
+		gvArchive.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				String monsterID = imgText[position].replace("No.", "");
+				Log.d("MonsterArchive", "start Activity with monster ID = No."
+						+ monsterID);
+				Intent intent = new Intent(ctx, ArchiveDetailActivity.class);
+				intent.putExtra("monsterID", monsterID);
+				ctx.startActivity(intent);
+			}
+
+		});
 		return gvArchive;
 	}
 
