@@ -1,4 +1,4 @@
-package tw.wesely.mstrikealerm;
+﻿package tw.wesely.mstrikealerm;
 
 import tw.wesely.mstrikealarm.R;
 import android.annotation.SuppressLint;

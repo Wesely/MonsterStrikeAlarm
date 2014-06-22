@@ -1,4 +1,4 @@
-package tw.wesely.mstrikealerm;
+﻿package tw.wesely.mstrikealerm;
 
 import tw.wesely.mstrikealarm.R;
 import android.app.AlertDialog;
@@ -28,13 +28,9 @@ public class PlayerID {
 		View contentView = inflater.inflate(R.layout.dialog_setgroup,
 				container, false);
 		final EditText etID = (EditText) contentView.findViewById(R.id.etID);
-		// ���ͤ@��Builder����
 		Builder builder = new AlertDialog.Builder(ctx);
-		// �]�wDialog�����D
 		builder.setTitle("Set ID");
-		// �]�wDialog�����e
 		builder.setView(contentView);
-		// �]�wPositive���s���
 		builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -53,7 +49,6 @@ public class PlayerID {
 				}
 			}
 		});
-		// �]�wNegative���s���
 		builder.setNegativeButton("沒事", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
