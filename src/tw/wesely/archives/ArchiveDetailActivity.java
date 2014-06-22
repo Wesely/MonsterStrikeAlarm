@@ -1,14 +1,6 @@
 package tw.wesely.archives;
 
-import java.io.IOException;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import tw.wesely.mstrikealarm.R;
-import tw.wesely.mstrikealerm.MainActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

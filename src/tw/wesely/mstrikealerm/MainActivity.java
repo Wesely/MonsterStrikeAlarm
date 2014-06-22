@@ -9,15 +9,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import tw.wesely.archives.ArchiveDetailActivity;
 import tw.wesely.archives.MonsterArchive;
 import tw.wesely.mstrikealarm.R;
 import tw.wesely.translate.MStrans;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.support.v7.app.ActionBarActivity;

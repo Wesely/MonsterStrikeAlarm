@@ -1,30 +1,28 @@
 package tw.wesely.archives;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import tw.wesely.mstrikealarm.R;
-import tw.wesely.util.ExpandableHeightGridView;
+import tw.wesely.mstrikealerm.MainActivity;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
+import android.widget.TextView;
 
 public class MonsterArchive extends Activity {
 	GridView gvArchive;
@@ -36,32 +34,111 @@ public class MonsterArchive extends Activity {
 		setContentView(R.layout.view_archive);
 		ctx = MonsterArchive.this;
 		gvArchive = (GridView) findViewById(R.id.gvArchive);
-		List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
-		for (int i = 0; i < image.length; i++) {
-			Map<String, Object> item = new HashMap<String, Object>();
-			item.put("image", image[i]);
-			item.put("text", imgText[i]);
-			items.add(item);
+		loadArchive();
+		gvArchive.setFastScrollEnabled(true);
+
+	}
+
+	ProgressDialog mProgressDialog;
+
+	private void loadArchive() {
+		mProgressDialog = ProgressDialog.show(this, "Loading...", "正在吃記憶體...",
+				true);
+
+		new Thread() {
+			@Override
+			public void run() {
+
+				try {
+					Thread.sleep(2000);
+					runOnUiThread(new Runnable() {
+
+						public void run() {
+							List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
+							for (int i = 0; i < image.length; i++) {
+								mProgressDialog.setProgress(i / image.length);
+								Map<String, Object> item = new HashMap<String, Object>();
+								item.put("image", image[i]);
+								item.put("text", imgText[i]);
+								items.add(item);
+							}
+							Log.d("Time-after for", System.currentTimeMillis()
+									+ "");
+							gvArchive
+									.setAdapter(new ArchiveGridViewAdapter(ctx));
+							gvArchive
+									.setOnItemClickListener(new OnItemClickListener() {
+										public void onItemClick(
+												AdapterView<?> parent,
+												View view, int position, long id) {
+											String monsterID = imgText[position]
+													.replace("No.", "");
+											Log.d("MonsterArchive",
+													"start Activity with monster ID = No."
+															+ monsterID);
+											Intent intent = new Intent(ctx,
+													ArchiveDetailActivity.class);
+											intent.putExtra("monsterID",
+													monsterID);
+											ctx.startActivity(intent);
+										}
+									});
+							mProgressDialog.dismiss();
+						}
+
+					});
+
+					Log.d("Time end", System.currentTimeMillis() + "");
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}.start();
+
+	}
+
+	public class ArchiveGridViewAdapter extends ArrayAdapter<Object> {
+		Context context;
+
+		public ArchiveGridViewAdapter(Context context) {
+			super(context, 0);
+			this.context = context;
 		}
 
-		SimpleAdapter adapter = new SimpleAdapter(ctx, items,
-				R.layout.grid_item, new String[] { "image", "text" },
-				new int[] { R.id.image, R.id.text });
+		@Override
+		public int getCount() {
+			return imgText.length;
+		}
 
-		gvArchive.setAdapter(adapter);
-		gvArchive.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				String monsterID = imgText[position].replace("No.", "");
-				Log.d("MonsterArchive", "start Activity with monster ID = No."
-						+ monsterID);
-				Intent intent = new Intent(ctx, ArchiveDetailActivity.class);
-				intent.putExtra("monsterID", monsterID);
-				ctx.startActivity(intent);
-			}
+		@Override
+		public long getItemId(int pos) {
+			String monsterID = imgText[pos].replace("No.", "");
+			return Integer.valueOf(monsterID);
+		}
 
-		});
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+			View row = inflater.inflate(R.layout.grid_item, parent, false);
+			ImageView iv = (ImageView) row.findViewById(R.id.image);
+			iv.setImageResource(image[position]);
+			TextView tv = (TextView) row.findViewById(R.id.text);
+			tv.setText(imgText[position]);
+			return row;
+		}
+	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			Log.d("onKeyDown", "BACK");
+			Intent intent = new Intent(ctx, MainActivity.class);
+			ctx.startActivity(intent);
+			finish();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	private int[] image = { R.drawable.icon_1, R.drawable.icon_2,
