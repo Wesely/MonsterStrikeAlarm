@@ -64,38 +64,6 @@ public class MonsterArchive extends Activity {
 
 	}
 
-	public View getArchiveView(LayoutInflater inflater, View root,
-			final Context ctx) {
-
-		gvArchive = (GridView) inflater.inflate(R.layout.view_archive, null);
-		List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
-		for (int i = 0; i < image.length; i++) {
-			Map<String, Object> item = new HashMap<String, Object>();
-			item.put("image", image[i]);
-			item.put("text", imgText[i]);
-			items.add(item);
-		}
-
-		SimpleAdapter adapter = new SimpleAdapter(ctx, items,
-				R.layout.grid_item, new String[] { "image", "text" },
-				new int[] { R.id.image, R.id.text });
-
-		gvArchive.setAdapter(adapter);
-		gvArchive.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				String monsterID = imgText[position].replace("No.", "");
-				Log.d("MonsterArchive", "start Activity with monster ID = No."
-						+ monsterID);
-				Intent intent = new Intent(ctx, ArchiveDetailActivity.class);
-				intent.putExtra("monsterID", monsterID);
-				ctx.startActivity(intent);
-			}
-
-		});
-		return gvArchive;
-	}
-
 	private int[] image = { R.drawable.icon_1, R.drawable.icon_2,
 			R.drawable.icon_3, R.drawable.icon_4, R.drawable.icon_5,
 			R.drawable.icon_6, R.drawable.icon_7, R.drawable.icon_8,
@@ -285,7 +253,16 @@ public class MonsterArchive extends Activity {
 			R.drawable.icon_579, R.drawable.icon_580, R.drawable.icon_581,
 			R.drawable.icon_582, R.drawable.icon_583, R.drawable.icon_584,
 			R.drawable.icon_585, R.drawable.icon_586, R.drawable.icon_587,
-			R.drawable.icon_588, };
+			R.drawable.icon_588, R.drawable.icon_589, R.drawable.icon_590,
+			R.drawable.icon_591, R.drawable.icon_592, R.drawable.icon_593,
+			R.drawable.icon_594, R.drawable.icon_595, R.drawable.icon_596,
+			R.drawable.icon_597, R.drawable.icon_598, R.drawable.icon_599,
+			R.drawable.icon_600, R.drawable.icon_601, R.drawable.icon_602,
+			R.drawable.icon_603, R.drawable.icon_604, R.drawable.icon_605,
+			R.drawable.icon_606, R.drawable.icon_607, R.drawable.icon_608,
+			R.drawable.icon_609, R.drawable.icon_610, R.drawable.icon_611,
+			R.drawable.icon_612, R.drawable.icon_613, R.drawable.icon_614, };
+
 	private String[] imgText = { "No.1", "No.2", "No.3", "No.4", "No.5",
 			"No.6", "No.7", "No.8", "No.9", "No.10", "No.11", "No.12", "No.13",
 			"No.14", "No.15", "No.16", "No.17", "No.18", "No.19", "No.20",
@@ -378,5 +355,9 @@ public class MonsterArchive extends Activity {
 			"No.568", "No.569", "No.570", "No.571", "No.572", "No.573",
 			"No.574", "No.575", "No.576", "No.577", "No.578", "No.579",
 			"No.580", "No.581", "No.582", "No.583", "No.584", "No.585",
-			"No.586", "No.587", "No.588" };
+			"No.586", "No.587", "No.588", "No.589", "No.590", "No.591",
+			"No.592", "No.593", "No.594", "No.595", "No.596", "No.597",
+			"No.598", "No.599", "No.600", "No.601", "No.602", "No.603",
+			"No.604", "No.605", "No.606", "No.607", "No.608", "No.609",
+			"No.610", "No.611", "No.612", "No.613", "No.614" };
 }
