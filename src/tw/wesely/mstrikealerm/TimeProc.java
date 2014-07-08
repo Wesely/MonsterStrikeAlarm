@@ -1,11 +1,14 @@
 package tw.wesely.mstrikealerm;
 
+import android.util.Log;
+
 public class TimeProc {
 	public static String detectAndShiftTimeFormat(String text){
 		return text;
 	}
 	
 	public static String getShiftedTime(String strTime){
+		Log.d("Timeproc", strTime);
 		String[] tokens = strTime.split("[ -]");
 		for(String str : tokens) {
 			if( str.matches("[0-9]+:[0-5][0-9]") ) {
@@ -15,6 +18,6 @@ public class TimeProc {
 				strTime = strTime.replace(str, replacement);
 			}
 		}
-		return strTime+"(Âè∞)";
+		return strTime+"(•x)";
 	}
 }
