@@ -16,10 +16,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,15 +30,31 @@ import android.widget.TextView;
 public class MonsterArchive extends Activity {
 	GridView gvArchive;
 	Context ctx;
+	Button btnSearch;
+	EditText etID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_archive);
 		ctx = MonsterArchive.this;
+		btnSearch = (Button) findViewById(R.id.btnSearch);
+		etID = (EditText) findViewById(R.id.etID);
 		gvArchive = (GridView) findViewById(R.id.gvArchive);
 		loadArchive();
 		gvArchive.setFastScrollEnabled(true);
+		btnSearch.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View btn) {
+				String id = etID.getText().toString();
+				Log.d("MonsterArchive",
+						"start Activity with monster ID = No."
+								+ id);
+				Intent intent = new Intent(ctx, ArchiveDetailActivity.class);
+				intent.putExtra("monsterID", id);
+				ctx.startActivity(intent);
+			}
+		});
 
 	}
 
@@ -338,7 +357,17 @@ public class MonsterArchive extends Activity {
 			R.drawable.icon_603, R.drawable.icon_604, R.drawable.icon_605,
 			R.drawable.icon_606, R.drawable.icon_607, R.drawable.icon_608,
 			R.drawable.icon_609, R.drawable.icon_610, R.drawable.icon_611,
-			R.drawable.icon_612, R.drawable.icon_613, R.drawable.icon_614, };
+			R.drawable.icon_612, R.drawable.icon_613, R.drawable.icon_614,
+			R.drawable.icon_615, R.drawable.icon_616, R.drawable.icon_617,
+			R.drawable.icon_618, R.drawable.icon_619, R.drawable.icon_620,
+			R.drawable.icon_621, R.drawable.icon_622, R.drawable.icon_623,
+			R.drawable.icon_624, R.drawable.icon_625, R.drawable.icon_626,
+			R.drawable.icon_627, R.drawable.icon_628, R.drawable.icon_629,
+			R.drawable.icon_630, R.drawable.icon_631, R.drawable.icon_632,
+			R.drawable.icon_633, R.drawable.icon_634, R.drawable.icon_635,
+			R.drawable.icon_636, R.drawable.icon_637, R.drawable.icon_638,
+			R.drawable.icon_639, R.drawable.icon_640, R.drawable.icon_641,
+			R.drawable.icon_642, R.drawable.icon_643, };
 
 	private String[] imgText = { "No.1", "No.2", "No.3", "No.4", "No.5",
 			"No.6", "No.7", "No.8", "No.9", "No.10", "No.11", "No.12", "No.13",
@@ -436,5 +465,10 @@ public class MonsterArchive extends Activity {
 			"No.592", "No.593", "No.594", "No.595", "No.596", "No.597",
 			"No.598", "No.599", "No.600", "No.601", "No.602", "No.603",
 			"No.604", "No.605", "No.606", "No.607", "No.608", "No.609",
-			"No.610", "No.611", "No.612", "No.613", "No.614" };
+			"No.610", "No.611", "No.612", "No.613", "No.614", "No.615",
+			"No.616", "No.617", "No.618", "No.619", "No.620", "No.621",
+			"No.622", "No.623", "No.624", "No.625", "No.626", "No.627",
+			"No.628", "No.629", "No.630", "No.631", "No.632", "No.633",
+			"No.634", "No.635", "No.636", "No.637", "No.638", "No.639",
+			"No.640", "No.641", "No.642", "No.643", };
 }

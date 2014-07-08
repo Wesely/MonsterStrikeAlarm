@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 
 import tw.wesely.translate.MStrans;
 
+import tw.wesely.mstrikealarm.R;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -16,12 +17,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
-public class MonsterWebView extends WebView {
+public class MonsterWebView  extends WebView {
 
 	String monsterID = "";
 
-	public MonsterWebView(Context context) {
+	public MonsterWebView(Context context){
 		super(context);
 		this.setWebViewClient(new MonsterArchiveWebViewClient());
 	}
@@ -58,7 +60,7 @@ public class MonsterWebView extends WebView {
 	}
 
 	// Title AsyncTask
-	private class LoadDocument extends AsyncTask<String, Document, Document> {
+	private class LoadDocument  extends AsyncTask<String, Document, Document>  {
 		@SuppressWarnings("unused")
 		String title;
 		ProgressDialog mProgressDialog;
@@ -132,23 +134,29 @@ public class MonsterWebView extends WebView {
 		@Override
 		protected void onPostExecute(Document document) {
 			mProgressDialog.dismiss();
-			Elements sections = document.getElementsByTag("section");
-			for (Element section : sections) {
-				Element leftside = section.child(0);
-				leftside.remove();
-				Elements imgs = section.getElementsByTag("img");
-				for (Element img : imgs)
-					img.attr("src",
-							"http://monst.appbank.net" + img.attr("src"));
-			}
-
-			Log.d("show html", document.html());
 			try {
-				loadTranslatedData(document.html());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Elements sections = document.getElementsByTag("section");
+				for (Element section : sections) {
+					Element leftside = section.child(0);
+					leftside.remove();
+					Elements imgs = section.getElementsByTag("img");
+					for (Element img : imgs)
+						img.attr("src",
+								"http://monst.appbank.net" + img.attr("src"));
+				}
+
+				Log.d("show html", document.html());
+				try {
+					loadTranslatedData(document.html());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (Exception e) {
+				Toast.makeText(getContext()	, getContext().getString(R.string.idnotfound) + ":" + monsterID, Toast.LENGTH_LONG).show();
 			}
+			
+			
 		}
 
 	}

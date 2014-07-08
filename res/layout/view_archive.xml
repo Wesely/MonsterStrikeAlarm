@@ -1,13 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/gvArchive"
-    android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:horizontalSpacing="2dp"
-    android:isScrollContainer="true"
-    android:scrollbarSize="200dp"
-    android:background="@drawable/input_text_area"
-    android:numColumns="3"
-    android:stretchMode="columnWidth"
-    android:verticalSpacing="20dp" />
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <EditText
+            android:id="@+id/etID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btnSearch"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/btnSearch"
+            android:background="@drawable/input_text_area"
+            android:ems="10"
+            android:singleLine="true"
+            android:hint="@string/idsearch"
+            android:inputType="number" >
+
+        </EditText>
+
+        <Button
+            android:id="@+id/btnSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="Search" />
+
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/gvArchive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_text_area"
+        android:gravity="center"
+        android:horizontalSpacing="2dp"
+        android:isScrollContainer="true"
+        android:numColumns="3"
+        android:scrollbarSize="200dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="20dp" />
+
+</LinearLayout>

@@ -16,7 +16,7 @@ public class TurtleAlarmReceiver extends BroadcastReceiver {
 	public void onReceive(Context arg0, Intent arg1) {
 		String title = "打烏龜時間";
 		String msg = "Fight";
-		
+
 		Log.d("notify", "alarm receive");
 		NotificationManager nm = (NotificationManager) arg0.getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification = new Notification.Builder(arg0)
@@ -25,5 +25,5 @@ public class TurtleAlarmReceiver extends BroadcastReceiver {
 				.setSmallIcon(R.drawable.ic_launcher).build();
 		nm.notify(1, notification);
 	}
-	
+
 }

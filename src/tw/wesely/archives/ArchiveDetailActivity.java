@@ -43,8 +43,10 @@ public class ArchiveDetailActivity extends Activity {
 				return false;
 			}
 		});
+		
 		mwv.loadMonsterById(monsterID);
-		// mwv.setLayoutParams(params);
+		
+		
 		LinearLayout container = (LinearLayout) findViewById(R.id.container);
 		container.addView(mwv);
 	}
