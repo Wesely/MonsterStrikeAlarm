@@ -110,7 +110,7 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	// URL Address
-	String url = "http://www.dopr.net/monst";
+	String url = "http://www.dopr.net/mon-st";
 	ProgressDialog mProgressDialog;
 	static View rootView;
 	LinearLayout rootLL;
@@ -196,53 +196,36 @@ public class MainActivity extends ActionBarActivity implements
 		String result = "【ID末兩碼 " + sid + "】";
 		tvGroup.setText(result);
 	}
-
-	public String parseTurtleTable(Element document) {
-
-		String content = "";
-		Elements tbls = document.getElementsByTag("table");
-
-		for (Element tbl : tbls) {
-			Element headline = tbl.previousElementSibling();
-			List<String> listTH = new ArrayList<String>();
-			List<String> listTDTime = new ArrayList<String>();
-			List<Element> listTDTitle = new ArrayList<Element>();// colored
-
-			while (headline != null) {
-				if (headline.tagName() == "h2" || headline.tagName() == "h3")
-					break;
-				headline = headline.previousElementSibling();
-			}
-
-			Elements fields = tbl.getElementsByTag("th");
-			for (Element field : fields) { // 組
-				listTH.add(field.text());
-				Log.d("fields", "field.text() = " + field.text());
-			}
-
-			Elements datas = tbl.getElementsByTag("td");
-			for (int index = 0; index < datas.size(); index++) {
+	 
+	public void genTurtleTable(Element tbl) {
+		List<String> listTH = new ArrayList<String>();
+		List<String> listTDTime = new ArrayList<String>();
+		
+		Elements fields = tbl.getElementsByTag("th");
+		for (int index = 1; index < fields.size(); ++index) { // 組
+			Element field = fields.get(index);
+			listTH.add(field.text());
+			Log.d("fields", "field.text() = " + field.text());
+		}
+		
+		Elements trs = tbl.getElementsByTag("tr");
+		for(Element tr : trs) {
+			listTDTime.clear();
+			Elements datas = tr.getElementsByTag("td");
+			if(datas.size() == 0)	continue;
+			Log.d("Timeproc", Integer.toString(datas.size()));
+			Element data_type = datas.get(0);
+			for (int index = 1; index < datas.size(); index++) {
 				Element data = datas.get(index);
-				if (headline.text().contains("亀")) {
+				String strTime = data.getElementsByTag("span").get(0).text();
+				if ( data_type.text().contains("亀") ) {
+					strTime = strTime.replace("～", "").replace("時半", ":30").replace("時", ":00");
 					Log.d("contains(亀)", "data.text()" + data.text());
-					listTDTime.add(TimeProc.getShiftedTime(data.text()));
-					continue;
-				} else if ((index % fields.size()) == 0) { // is Stage Title
-					Log.d("(index % fields.size()) == 0)", data.text());
-					listTDTitle.add(data);
-					continue;
-				}
-				// if (data.text().matches(".*[0-9]:[0-5][0-9].*")) {
-				if ((index % fields.size()) == 1) {
-					// Representing TIME X:XX & XX:XX
-					String item = TimeProc.getShiftedTime(data.text());
-					data.text(item);
-					Log.d("token time", (index % fields.size()) + ":" + item);
-					listTDTime.add(item);
+					listTDTime.add(TimeProc.getShiftedTime(strTime));
 					continue;
 				}
 			}
-			if (headline.text().contains("飯")) {
+			if (data_type.text().contains("飯")) {
 				Log.d("parseTurtleTable", "飯龜");
 				QuestTurtle tq = new QuestTurtle("【昼の飯より亀の甲？】", listTH,
 						listTDTime);
@@ -258,7 +241,7 @@ public class MainActivity extends ActionBarActivity implements
 				*/
 				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
 			}
-			if (headline.text().contains("年")) {
+			if (data_type.text().contains("年")) {
 				Log.d("parseTurtleTable", "年龜");
 				QuestTurtle tq = new QuestTurtle("【年の功より亀の甲？】", listTH,
 						listTDTime);
@@ -275,7 +258,7 @@ public class MainActivity extends ActionBarActivity implements
 				}
 				*/
 			}
-			if (headline.text().contains("マン")) {
+			if (data_type.text().contains("マン")) {
 				Log.d("parseTurtleTable", "超大龜");
 				QuestTurtle tq = new QuestTurtle("【マンの亀よりオクの甲？】", listTH,
 						listTDTime);
@@ -292,19 +275,78 @@ public class MainActivity extends ActionBarActivity implements
 				}
 				*/
 			}
-			if (headline.text().contains("開催中")) {
-				Log.d("parseTurtleTable", "開催中");
-				QuestBoss tq = new QuestBoss("【現正降臨中】", listTDTitle, listTDTime);
-				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
-			}
-			if (headline.text().contains("予定")) {
-				Log.d("parseTurtleTable", "予定");
-				QuestBoss tq = new QuestBoss("【未來降臨預定】", listTDTitle,
-						listTDTime);
-				rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
-			}
-
 		}
+	}
+	
+	public void genMonstTable(Element tbl) {
+		List<String> listTH = new ArrayList<String>();
+		List<String> listTDTime = new ArrayList<String>();
+		List<Element> listTDTitle = new ArrayList<Element>();
+		
+		Elements fields = tbl.getElementsByTag("th");
+		for (int index = 0; index < fields.size(); ++index) { // 組
+			Element field = fields.get(index);
+			listTH.add(field.text());
+			Log.d("fields", "field.text() = " + field.text());
+		}
+		
+		Elements trs = tbl.getElementsByTag("tr");
+		for(Element tr : trs) {
+			Elements datas = tr.getElementsByTag("td");
+			if(datas.size() == 0)	continue;
+			Log.d("Timeproc", Integer.toString(datas.size()));
+			for (int index = 0; index < datas.size(); index++) {
+				Element data = datas.get(index);
+				if ((index % fields.size()) == 0) { // is Stage Title
+					Log.d("(index % fields.size()) == 0)", data.text());
+					listTDTitle.add(data);
+					continue;
+				}
+				
+				// if (data.text().matches(".*[0-9]:[0-5][0-9].*")) {
+				if ((index % fields.size()) == 1) {
+					Elements items = data.getElementsByTag("span"); 
+					String item;
+					String strTime;
+					if(items.size() > 0)	strTime = items.get(0).text();
+					else	strTime = items.text();
+					
+					if(strTime.matches("[0-9]+～[0-9]+時")) {
+					// Representing TIME X:XX & XX:XX
+						strTime = strTime.replace("～", ":00 ").replace("時", ":00");
+						item = TimeProc.getShiftedTime(strTime);
+					} else {
+						item = strTime;
+					}
+					data.text(item);
+					Log.d("Timeproc", (index % fields.size()) + ":" + item);
+					listTDTime.add(item);
+					continue;
+				}
+				
+			}
+		}
+		
+		Log.d("Timeproc", "Add view");
+		QuestBoss tq = new QuestBoss("【現正降臨中】", listTDTitle, listTDTime);
+		rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+	}
+
+	public String parseTurtleTable(Element document) {
+		String content = "";
+		Element turtleTable = document.getElementsByTag("table").get(0);
+		genTurtleTable(turtleTable);
+		
+		Element monstTable = document.getElementsByTag("table").get(1);
+		genMonstTable(monstTable);
+		
+		/*if (headline.text().contains("予定")) {
+			Log.d("parseTurtleTable", "予定");
+			QuestBoss tq = new QuestBoss("【未來降臨預定】", listTDTitle,
+					listTDTime);
+			rootLL.addView(tq.getTurtleStageChartView(MainActivity.this));
+		}*/
+		
 		return content;
 	}
 
